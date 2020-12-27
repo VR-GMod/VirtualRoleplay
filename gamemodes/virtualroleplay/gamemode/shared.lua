@@ -96,6 +96,7 @@ VRP.Print( "loading core files" )
 require_folder( "modules" )
 
 function GM:Initialize()
-    VRP.Print( "init SQL database" )
-    VRP.SQLInit()
+    if VRP.SQLInit() then
+        VRP.Print( "creating database" )
+    end
 end
