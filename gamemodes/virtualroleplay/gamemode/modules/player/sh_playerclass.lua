@@ -12,8 +12,18 @@ PLAYER.DefaultWeapons = {
 }
 
 function PLAYER:SetupDataTables()
+    --  index by types
+    local types = {}
     for i, v in ipairs( VRP.PlayerNetworkVars ) do
-        self.Player:NetworkVar( v.type, i - 1, v.name )
+        types[v.type] = types[v.type] or {}
+        types[v.type][#types[v.type] + 1] = v
+    end
+
+    --  create network vars
+    for k, vars in pairs( types ) do
+        for i, v in ipairs( vars ) do
+            self.Player:NetworkVar( k, i - 1, v.name )
+        end
     end
 end
 
