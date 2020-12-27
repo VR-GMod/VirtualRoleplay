@@ -5,7 +5,7 @@ function GM:PlayerInitialSpawn( ply )
         timer.Simple( 0, function()
             if not VRP.LoadPlayerNetworksVars( ply ) then
                 VRP.SQLNewPlayer( ply )
-                VRP.Print( "new player (%s)", ply:GetName() )
+                VRP.Print( "new player (%s)", ply:SteamName() )
             end
         end )
     end

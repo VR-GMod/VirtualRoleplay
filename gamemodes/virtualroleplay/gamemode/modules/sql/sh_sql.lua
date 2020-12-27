@@ -13,7 +13,7 @@ function VRP.SQLNewPlayer( ply )
     local steamid = SQLStr( isstring( ply ) and ply or ply:SteamID() )
     return sql.Query( ( [[
         INSERT INTO vrp_player_data VALUES( %s, %s, %d )
-    ]] ):format( steamid, SQLStr( ply:GetName() ), ply:GetMoney() ) )
+    ]] ):format( steamid, SQLStr( ply:SteamName() ), ply:GetMoney() ) )
 end
 
 function VRP.SQLUpdate( ply, key, value )
