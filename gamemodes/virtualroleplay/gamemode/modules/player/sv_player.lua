@@ -35,6 +35,6 @@ function GM:PlayerSpawn( ply, transition )
     ply:AllowFlashlight( true )
 end
 
-function GM:PlayerDisconnected( ply )
-    VRP.SavePlayerNetworkVars( ply )
-end
+-- function GM:PlayerDisconnected( ply )
+--     VRP.SavePlayerNetworkVars( ply )
+-- end
