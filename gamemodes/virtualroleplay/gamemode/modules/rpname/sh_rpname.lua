@@ -17,10 +17,11 @@ if not SERVER then return end
 
 local function callback( ply, args )
     if #args == 0 then
-        return "RPName: you must specify a valid name!"
+        return "You must specify a valid name!", 1
     end
 
     ply:SetRPName( table.concat( args, " " ) )
+    return ( "You changed your name to %s" ):format( ply:GetRPName() )
 end
 
 VRP.AddChatCommand( "rpname", callback )

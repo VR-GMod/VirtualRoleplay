@@ -13,10 +13,14 @@ function VRP.HandleChatCommand( ply, text )
     if cmd and cmd:StartWith( VRP.CommandIndexor ) then
         cmd = cmd:gsub( VRP.CommandIndexor, "" )
         if VRP.ChatCommands[cmd] then
-            local msg = VRP.ChatCommands[cmd]( ply, args )
+            local msg, type, length = VRP.ChatCommands[cmd]( ply, args )
 
             if msg then
-                ply:ChatPrint( msg )
+                if CLIENT then
+                    notification.AddLegacy( msg, type or 0, length or 3 )
+                else
+                    VRP.Notify( ply, msg, type or 0, length or 3 )
+                end
             end
 
             return ""
