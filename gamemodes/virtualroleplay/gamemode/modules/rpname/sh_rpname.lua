@@ -11,3 +11,18 @@ function PLAYER:GetName()
 end
 PLAYER.Name = PLAYER.GetName
 PLAYER.Nick = PLAYER.GetName
+
+--  chat commands
+if not SERVER then return end
+
+local function callback( ply, args )
+    if #args == 0 then
+        ply:ChatPrint( "RPName: you must specify a valid name!" )
+        return
+    end
+
+    ply:SetRPName( table.concat( args, " " ) )
+end
+
+VRP.AddChatCommand( "rpname", callback )
+VRP.AddChatCommand( "name", callback )
