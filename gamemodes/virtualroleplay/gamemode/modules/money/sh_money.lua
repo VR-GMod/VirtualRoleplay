@@ -40,3 +40,12 @@ VRP.AddChatCommand( "givemoney", function( ply, args )
     target:AddMoney( amount )
     ply:AddMoney( -amount )
 end )
+
+VRP.AddChatCommand( "setmoney", function( ply, args )
+    if not ply:IsSuperAdmin() then return "Money: you must be a SuperAdmin" end
+
+    local amount = tonumber( args[1] )
+    if not amount or amount <= 0 then return "Money: you must specify the amount!" end
+
+    ply:SetMoney( amount )
+end )
