@@ -17,8 +17,7 @@ if not SERVER then return end
 
 local function callback( ply, args )
     if #args == 0 then
-        ply:ChatPrint( "RPName: you must specify a valid name!" )
-        return
+        return "RPName: you must specify a valid name!"
     end
 
     ply:SetRPName( table.concat( args, " " ) )
