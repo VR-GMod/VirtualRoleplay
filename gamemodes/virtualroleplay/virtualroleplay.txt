@@ -1,0 +1,7 @@
+"virtualroleplay"
+{
+	"base"		"base"
+	"title"		"Virtual Roleplay"
+	"maps"		"^rp_"
+	"menusystem"	"1"
+}
