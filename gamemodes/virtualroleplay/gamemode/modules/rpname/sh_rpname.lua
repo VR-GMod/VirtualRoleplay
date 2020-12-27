@@ -1,4 +1,6 @@
-VRP.AddPlayerNetworkVar( "String", "RPName", true )
+VRP.AddPlayerNetworkVar( "String", "RPName", true, function( ply )
+    return ply:SteamName()
+end )
 
 --  override name functions
 local PLAYER = FindMetaTable( "Player" )

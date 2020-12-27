@@ -1,6 +1,9 @@
-VRP.AddPlayerNetworkVar( "Int", "Money", true )
+VRP.AddPlayerNetworkVar( "Int", "Money", true, function( ply )
+    return VRP.MoneyStartAmount or 0
+end )
 
 --  global variables
+VRP.MoneyStartAmount = 1000
 VRP.MoneyAttachLeft = true
 VRP.MoneyCurrency = "$"
 
