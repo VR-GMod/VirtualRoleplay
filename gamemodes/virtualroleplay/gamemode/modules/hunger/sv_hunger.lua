@@ -4,12 +4,12 @@ local function HungerThink()
     if not VRP.HungerEnabled then return end
     for _, v in ipairs(player.GetAll()) do
         if not v:Alive() then continue end
-        v:HUpdate()
+        v:HungerUpdate()
     end
 end
 timer.Create("HungerThink", VRP.HungerStarvingTime, 0, HungerThink)
 
-function PLAYER:HUpdate()
+function PLAYER:HungerUpdate()
     self:SetHunger( math.Clamp(self:GetHunger() - VRP.HungerStarvingAmount, 0, 100) or 100)
 
     if self:GetHunger() == 0 then

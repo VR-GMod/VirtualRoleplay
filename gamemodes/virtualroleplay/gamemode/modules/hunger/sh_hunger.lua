@@ -1,5 +1,5 @@
-VRP.AddPlayerNetworkVar( "Int", "Hunger", true, function( ply )
-    return VRP.HungerStartAmount or 0
+VRP.AddPlayerNetworkVar( "Int", "Hunger", false, function( ply )
+    return VRP.HungerStartAmount
 end )
 
 --  global variables
