@@ -23,20 +23,28 @@ function GM:PlayerInitialSpawn( ply )
             end
         end )
     end
+
+    --  job
+    ply:ChangeJob( VRP.JobDefault, nil, nil, true )
 end
 
 function GM:PlayerSpawn( ply, transition )
     --  set player class
     player_manager.SetPlayerClass( ply, "vrp_player" )
 
-    --  call spawn functions
-    player_manager.RunClass( ply, "Spawn" )
-    hook.Call( "PlayerLoadout", self, ply )
-    hook.Call( "PlayerSetModel", self, ply )
-
     --  setup
-    ply:SetupHands()
+    ply:LoadJobLoadout( ply:Team() )
     ply:AllowFlashlight( true )
+
+    --  call spawn functions
+    hook.Call( "PlayerLoadout", self, ply )
+    --hook.Call( "PlayerSetModel", self, ply )
+end
+
+function GM:PlayerDeath( ply, inf, atk )
+    --  job
+    local job = VRP.Jobs[ply:Team()]
+    if job and job.player_death then job.player_death( ply ) end
 end
 
 -- function GM:PlayerDisconnected( ply )

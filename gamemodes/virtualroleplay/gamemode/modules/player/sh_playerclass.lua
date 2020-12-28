@@ -37,8 +37,8 @@ function PLAYER:SetupDataTables()
 end
 
 function PLAYER:Loadout()
-    self.Player:StripWeapons()
-	self.Player:RemoveAllAmmo()
+    --self.Player:StripWeapons()
+    --self.Player:RemoveAllAmmo()
 
     --  speed
     self.Player:SetWalkSpeed( self.WalkSpeed )

@@ -26,7 +26,7 @@ function GM:HUDPaint()
     do
         --  name
         draw.SimpleText( "Name:", "Trebuchet24", x + space / 2, y + space / 3, color_white )
-        draw.SimpleText( LocalPlayer():GetRPName(), "Trebuchet24", x + box_w - space / 2, y + space / 3, color_white, TEXT_ALIGN_RIGHT )
+        draw.SimpleText( LocalPlayer():GetRPName(), "Trebuchet24", x + box_w - space / 2, y + space / 3, team.GetColor( LocalPlayer():Team() ), TEXT_ALIGN_RIGHT )
         local y = y + draw.GetFontHeight( "Trebuchet24" ) * 1.2
 
         --  money

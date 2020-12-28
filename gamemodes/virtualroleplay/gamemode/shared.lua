@@ -1,5 +1,5 @@
 ---   global table
-VRP = {}
+VRP = VRP or {}
 
 function VRP.Print( txt, ... )
     print( "Virtual Roleplay: " .. ( #{ ... } == 0 and txt or txt:format( ... ) ) )
@@ -101,4 +101,8 @@ function GM:Initialize()
     if VRP.SQLInit() then
         VRP.Print( "creating database" )
     end
+
+    --  init items
+    VRP.Print( "loading custom items" )
+    hook.Run( "VRP:LoadCustomItems" )
 end
