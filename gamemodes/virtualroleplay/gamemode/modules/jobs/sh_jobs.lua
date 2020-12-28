@@ -24,3 +24,9 @@ function VRP.CreateJob( name, tbl )
     team.SetUp( id, name, tbl.color )
     return id
 end
+
+local PLAYER = FindMetaTable( "Player" )
+
+function PLAYER:GetJob()
+    return VRP.Jobs[self:Team() + 1]
+end

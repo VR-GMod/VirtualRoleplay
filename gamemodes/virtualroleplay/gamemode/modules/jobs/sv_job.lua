@@ -1,6 +1,6 @@
 local PLAYER = FindMetaTable( "Player" )
 
-function PLAYER:ChangeJob( job_id, model_id, is_forced, silent )
+function PLAYER:SetJob( job_id, model_id, is_forced, silent )
     if job_id == self:Team() then return false, "You are already in this job." end
     local job = VRP.Jobs[job_id]
 
@@ -56,7 +56,7 @@ VRP.AddChatCommand( "setjob", function( ply, args )
     local function became( id )
         if not VRP.Jobs[id] then return "This job doesn't exists!", 1 end
 
-        local success, reason = ply:ChangeJob( id )
+        local success, reason = ply:SetJob( id )
         if success then
             return
         else
