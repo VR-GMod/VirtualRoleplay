@@ -9,7 +9,11 @@ if SERVER then
             net.WriteString( text )
             net.WriteUInt( type or 0, type_bytes )
             net.WriteUInt( length or 3, length_bytes )
-        net.Send( ply )
+        if not ply then
+            net.Broadcast()
+        else
+            net.Send( ply )
+        end
     end
 else
     net.Receive( "VRP:Notify", function()
