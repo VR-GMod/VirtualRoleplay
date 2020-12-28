@@ -30,6 +30,13 @@ local infos = {
          right = function( ply )
              return ply:GetJob().name, team.GetColor( ply:Team() )
          end,
+     },
+     {
+         left = "Hunger:",
+         right = function( ply )
+            return ply:GetHunger()
+         end
+
      }
 }
 
