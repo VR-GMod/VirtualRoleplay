@@ -7,6 +7,7 @@ end
 
 --  network vars
 VRP.PlayerNetworkVars = {}
+VRP.PlayerNetworkVarsAutoUpdate = true
 function VRP.AddPlayerNetworkVar( type, name, save, default_value )
     VRP.PlayerNetworkVars[#VRP.PlayerNetworkVars + 1] = {
         type = type,

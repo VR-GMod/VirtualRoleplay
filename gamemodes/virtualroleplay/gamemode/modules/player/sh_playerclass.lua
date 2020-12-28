@@ -27,6 +27,7 @@ function PLAYER:SetupDataTables()
             --  auto-update variable in DB
             if SERVER and v.save then
                 self.Player:NetworkVarNotify( v.name, function( ply, name, old, new )
+                    if not VRP.PlayerNetworkVarsAutoUpdate then return end
                     if old == new then return end
                     VRP.SQLUpdate( ply, SQLStr( name ), k == "String" and SQLStr( new ) or new )
                 end )

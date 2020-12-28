@@ -3,19 +3,23 @@ function GM:PlayerInitialSpawn( ply )
     --  sql
     if VRP.SQLInit then
         timer.Simple( 0, function()
+            --  init values
+            for i, v in ipairs( VRP.PlayerNetworkVars ) do
+                if v.default_value then
+                    local value = isfunction( v.default_value ) and v.default_value( ply ) or v.default_value
+                    if value == nil then return end
+
+                    --  default value (don't save)
+                    VRP.PlayerNetworkVarsAutoUpdate = false
+                    ply["Set" .. v.name]( ply, value )
+                    VRP.PlayerNetworkVarsAutoUpdate = true
+                end
+            end
+
+            --  load data
             if not VRP.LoadPlayerNetworksVars( ply ) then
                 VRP.SQLNewPlayer( ply )
                 VRP.Print( "new player (%s)", ply:SteamName() )
-
-                --  init values
-                for i, v in ipairs( VRP.PlayerNetworkVars ) do
-                    if v.default_value then
-                        local value = isfunction( v.default_value ) and v.default_value( ply ) or v.default_value
-                        if value == nil then return end
-
-                        ply["Set" .. v.name]( ply, value )
-                    end
-                end
             end
         end )
     end
