@@ -3,8 +3,6 @@ VRP.AddPlayerNetworkVar( "String", "Language", false, "en" )
 VRP.Languages = {}
 
 function VRP.AddLanguage( name, tbl )
-    print( "\tLanguage: " .. name )
-
     VRP.Languages[name] = tbl
 end
 
