@@ -2,7 +2,7 @@
 hook.Add( "VRP:LoadCustomItems", "VRP:Jobs", function()
     TEAM_CITIZEN = VRP.CreateJob( "Citizen", {
         description = [[Basic citizen]],
-        color = Color( 31, 210, 32 ),
+        color = Color( 31, 180, 32 ),
         weapons = {},
         models = {
             "models/player/Group01/Female_01.mdl",
@@ -27,7 +27,7 @@ hook.Add( "VRP:LoadCustomItems", "VRP:Jobs", function()
 
     TEAM_POLICE = VRP.CreateJob( "Police Officer", {
         description = [[Police officer is aware of crimes and listen to his superior.]],
-        color = Color( 31, 32, 210 ),
+        color = Color( 61, 62, 210 ),
         weapons = {
             "weapon_pistol",
             "weapon_smg1",

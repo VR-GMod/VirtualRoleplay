@@ -25,7 +25,7 @@ function GM:PlayerInitialSpawn( ply )
     end
 
     --  job
-    ply:ChangeJob( VRP.JobDefault, nil, nil, true )
+    ply:SetJob( VRP.JobDefault, nil, nil, true )
 end
 
 function GM:PlayerSpawn( ply, transition )
