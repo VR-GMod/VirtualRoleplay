@@ -12,10 +12,43 @@ local function draw_bar( x, y, color, ratio, lerp_ratio )
     draw.RoundedBox( 8, x + gap, y - bar_h - space / 2 + gap, ratio * bar_w - gap * 2, bar_h - gap * 2, color )
 end
 
+local infos = {
+     {
+         left = "Name:",
+         right = function( ply )
+             return ply:GetRPName()
+         end,
+     },
+     {
+         left = "Money:",
+         right = function( ply )
+             return VRP.FormatMoney( ply:GetMoney() ), color_white
+         end,
+     },
+     {
+         left = "Job:",
+         right = function( ply )
+             return ply:GetJob().name, team.GetColor( ply:Team() )
+         end,
+     }
+}
+
 local lerp_health_ratio, lerp_armor_ratio = 1, 0
 function GM:HUDPaint()
-    local box_w, box_h = ScrW() * .1, ScrH() * .065
+    local ply = LocalPlayer()
+    local text_height = draw.GetFontHeight( "Trebuchet24" )
+    local text_space = text_height * 1.2
     space = ScrH() * .02
+
+    --  get size
+    local box_w, box_h = 0, 0
+    for i, v in ipairs( infos ) do
+        local text = v.right( ply )
+        local text_w, text_h = surface.GetTextSize( text )
+        box_w = math.max( box_w, text_w + surface.GetTextSize( v.left ) * 2 )
+        box_h = math.max( box_h, text_h )
+    end
+    box_h = box_h + text_space * #infos - text_height + space / 2
 
     local x, y = space, ScrH() - space - box_h
 
@@ -23,17 +56,16 @@ function GM:HUDPaint()
     draw.RoundedBox( 8, x, y, box_w, box_h, color_background )
 
     --  infos
-    do
-        --  name
-        draw.SimpleText( "Name:", "Trebuchet24", x + space / 2, y + space / 3, color_white )
-        draw.SimpleText( LocalPlayer():GetRPName(), "Trebuchet24", x + box_w - space / 2, y + space / 3, team.GetColor( LocalPlayer():Team() ), TEXT_ALIGN_RIGHT )
-        local y = y + draw.GetFontHeight( "Trebuchet24" ) * 1.2
+    local info_y = y
+    for i, v in ipairs( infos ) do
+        local text, color = v.right( ply )
 
-        --  money
-        draw.SimpleText( "Money:", "Trebuchet24", x + space / 2, y + space / 3, color_white )
-        draw.SimpleText( VRP.FormatMoney( LocalPlayer():GetMoney() ), "Trebuchet24", x + box_w - space / 2, y + space / 3, color_white, TEXT_ALIGN_RIGHT )
+        draw.SimpleText( v.left, "Trebuchet24", x + space / 2, info_y + space / 3, color_white )
+        draw.SimpleText( text, "Trebuchet24", x + box_w - space / 2, info_y + space / 3, color, TEXT_ALIGN_RIGHT )
+        info_y = info_y + text_space
     end
 
+    --  bars
     bar_w, bar_h = box_w, ScrH() * .02
     gap = ScrH() * .005
 
