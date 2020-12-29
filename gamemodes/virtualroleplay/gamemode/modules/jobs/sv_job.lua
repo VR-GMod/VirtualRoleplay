@@ -1,30 +1,34 @@
 local PLAYER = FindMetaTable( "Player" )
 
 function PLAYER:SetJob( job_id, model_id, is_forced, silent )
-    if job_id == self:Team() then return false, "You are already in this job." end
+    if job_id == self:Team() then return false, VRP.GetPhrase( "same_job", self:GetLanguage() ) end
     local job = VRP.Jobs[job_id]
 
     --  check max
     local n_player = team.NumPlayers( job_id )
     if not is_forced and ( job.max < 1 and n_player >= player.GetCount() * job.max or n_player >= job.max ) then
-        return false, "The limit of workers in this job have been reached."
+        return false, VRP.GetPhrase( "reach_max_workers_job", self:GetLanguage() )
     end
 
     --  custom check
     if job.custom_check then
         local success, reason = job.custom_check( self )
         if not success then
-            return false, reason or "You can't have access to this job!"
+            return false, reason or VRP.GetPhrase( "no_access_job", self:GetLanguage() )
         end
     end
 
     --  team
+    hook.Run( "VRP:ChangeJob", self, self:Team(), job_id )
     self:SetTeam( job_id )
 
     self:LoadJobLoadout( job_id, model_id )
 
     if not silent then
-        VRP.Notify( nil, ( "%s became %s!" ):format( self:GetRPName(), job.name ) )
+        VRP.Notify( nil, VRP.GetPhrase( "become_job", self:GetLanguage(), {
+            name = self:GetRPName(),
+            job = job.name,
+        } ) )
     end
     return true
 end
@@ -51,10 +55,10 @@ end
 
 --  chat command
 VRP.AddChatCommand( "setjob", function( ply, args )
-    if not args[1] then return "Please specify the job's command or ID", 1 end
+    if not args[1] then return VRP.GetPhrase( "no_input", ply:GetLanguage() ), 1 end
 
     local function became( id )
-        if not VRP.Jobs[id] then return "This job doesn't exists!", 1 end
+        if not VRP.Jobs[id] then return VRP.GetPhrase( "no_input", ply:GetLanguage() ), 1 end
 
         local success, reason = ply:SetJob( id )
         if success then
