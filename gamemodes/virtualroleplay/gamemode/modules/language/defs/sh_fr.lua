@@ -15,6 +15,7 @@ VRP.AddLanguage( "fr", {
 
     job = "Métier",
     no_job = "Vous n'avez pas de métier!",
+    same_job = "Vous ne pouvez pas rejoindre le même métier!",
     reach_max_workers_job = "La limite de travailleurs dans ce métier est atteinte!",
     no_access_job = "Vous n'avez pas accès à ce métier!",
     become_job = "${name} est devenu ${job}.",

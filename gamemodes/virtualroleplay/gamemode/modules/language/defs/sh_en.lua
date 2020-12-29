@@ -15,6 +15,7 @@ VRP.AddLanguage( "en", {
 
     job = "Job",
     no_job = "You don't have a job!",
+    same_job = "You can't join the same job!",
     reach_max_workers_job = "The limit of workers in this job have been reached!",
     no_access_job = "You can't have access to this job!",
     become_job = "${name} became ${job}.",

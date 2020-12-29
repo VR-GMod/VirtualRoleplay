@@ -17,7 +17,7 @@ end
 --  timer
 local pay_times = {}
 
-VRP.MoneyPayTime = 15 --  in seconds
+VRP.MoneyPayTime = 60 --  in seconds
 timer.Create( "VRP:PayDay", 1, 0, function()
     for i, v in ipairs( player.GetAll() ) do
         --  new players
