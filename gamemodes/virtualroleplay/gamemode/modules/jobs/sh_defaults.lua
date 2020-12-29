@@ -39,16 +39,72 @@ hook.Add( "VRP:LoadCustomItems", "VRP:Jobs", function()
         salary = VRP.JobDefaultSalary * 1.5,
         max = .25, --  25% of max player
         cmd = "police",
+        ammos = {
+            ["pistol"] = 250,
+            ["smg1"] = 500,
+        },
         custom_check = function( ply )
             return ply:FlashlightIsOn(), "Get your flashlight on!"
         end,
         player_spawn = function( ply )
-            ply:GiveAmmo( 250, "pistol", false )
-            ply:GiveAmmo( 500, "smg1", false )
+            ply:SetArmor( 25 )
+        end,
+    } )
+
+    TEAM_CHIEF = VRP.CreateJob( "Police Chief", {
+        description = [[Police chief organize his officers in order to maintain security.]],
+        color = Color( 61, 62, 210 ),
+        weapons = {
+            "weapon_357",
+            "weapon_smg1",
+        },
+        models = {
+            "models/player/combine_soldier.mdl",
+            "models/player/combine_soldier_prisonguard.mdl",
+        },
+        salary = VRP.JobDefaultSalary * 2,
+        max = 1,
+        cmd = "chief",
+        ammos = {
+            ["357"] = 250,
+            ["smg1"] = 500,
+        },
+        custom_check = function( ply )
+            return ply:Team() == TEAM_POLICE, "You must be an officer before being the chief!"
+        end,
+        player_spawn = function( ply )
+            ply:SetArmor( 50 )
         end,
         player_death = function( ply )
-            ply:ChangeJob( TEAM_CITIZEN )
+            ply:SetJob( TEAM_POLICE )
         end,
+    } )
+
+    TEAM_MEDIC = VRP.CreateJob( "Medic", {
+        description = [[Medic heals people in need.]],
+        color = Color( 61, 210, 62 ),
+        weapons = {
+            "weapon_medkit",
+        },
+        models = {
+            "models/player/Group03m/female_01.mdl",
+            "models/player/Group03m/female_02.mdl",
+            "models/player/Group03m/female_03.mdl",
+            "models/player/Group03m/female_04.mdl",
+            "models/player/Group03m/female_05.mdl",
+            "models/player/Group03m/female_06.mdl",
+            "models/player/Group03m/male_01.mdl",
+            "models/player/Group03m/male_02.mdl",
+            "models/player/Group03m/male_03.mdl",
+            "models/player/Group03m/male_04.mdl",
+            "models/player/Group03m/male_05.mdl",
+            "models/player/Group03m/male_06.mdl",
+            "models/player/Group03m/male_07.mdl",
+            "models/player/Group03m/male_08.mdl",
+            "models/player/Group03m/male_09.mdl",
+        },
+        salary = VRP.JobDefaultSalary * 1.5,
+        max = .25,
     } )
 
     VRP.JobDefault = TEAM_CITIZEN
