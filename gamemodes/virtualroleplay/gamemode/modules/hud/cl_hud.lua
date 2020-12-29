@@ -33,14 +33,16 @@ local infos = {
      }
 }
 
+local font = "Trebuchet24"
 local lerp_health_ratio, lerp_armor_ratio = 1, 0
 function GM:HUDPaint()
     local ply = LocalPlayer()
-    local text_height = draw.GetFontHeight( "Trebuchet24" )
+    local text_height = draw.GetFontHeight( font )
     local text_space = text_height * 1.2
     space = ScrH() * .02
 
     --  get size
+    surface.SetFont( font )
     local box_w, box_h = 0, 0
     for i, v in ipairs( infos ) do
         local text = v.right( ply )

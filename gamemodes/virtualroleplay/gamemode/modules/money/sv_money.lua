@@ -1,3 +1,13 @@
+function VRP.CreateMoneyBag( pos, amount )
+    local money = ents.Create( "vrp_money_bag" )
+    if not IsValid( money ) then return end
+    money:SetPos( pos )
+    money:Spawn()
+    money:SetMoney( amount )
+
+    return money
+end
+
 --  chat commands
 
 VRP.AddChatCommand( "givemoney", function( ply, args )

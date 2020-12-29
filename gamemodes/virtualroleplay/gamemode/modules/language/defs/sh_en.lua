@@ -8,6 +8,7 @@ VRP.AddLanguage( "en", {
 
     money = "Money",
     not_enough_money = "You don't have enough money to afford that!",
+    find_money = "You found ${amount}.",
     receive_money = "You received ${amount} from ${name}.",
     give_money = "You gave ${amount} to ${name}.",
     set_money = "You set your money to ${amount}.",
