@@ -12,7 +12,7 @@ function ENT:Initialize()
     --  phys
     local phys = self:GetPhysicsObject()
     if IsValid( phys ) then
-    	phys:Wake()
+        phys:Wake()
     end
 
     --  use
