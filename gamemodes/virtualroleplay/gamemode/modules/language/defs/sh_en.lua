@@ -14,7 +14,9 @@ VRP.AddLanguage( "en", {
     set_money = "You set your money to ${amount}.",
 
     job = "Job",
+    no_job = "You don't have a job!",
     reach_max_workers_job = "The limit of workers in this job have been reached!",
     no_access_job = "You can't have access to this job!",
-    become_job = "${name} became ${job}."
+    become_job = "${name} became ${job}.",
+    pay_job = "You have been paid ${amount} for your work."
 } )

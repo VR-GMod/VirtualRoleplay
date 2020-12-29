@@ -9,7 +9,6 @@ function VRP.CreateMoneyBag( pos, amount )
 end
 
 --  chat commands
-
 VRP.AddChatCommand( "givemoney", function( ply, args )
     local amount = tonumber( args[1] )
     if not amount or amount <= 0 then return VRP.GetPhrase( "no_input", ply:GetLanguage() ), 1 end

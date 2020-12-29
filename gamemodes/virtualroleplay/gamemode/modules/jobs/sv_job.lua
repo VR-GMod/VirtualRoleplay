@@ -19,6 +19,7 @@ function PLAYER:SetJob( job_id, model_id, is_forced, silent )
     end
 
     --  team
+    hook.Run( "VRP:ChangeJob", self, self:Team(), job_id )
     self:SetTeam( job_id )
 
     self:LoadJobLoadout( job_id, model_id )
