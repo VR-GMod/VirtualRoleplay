@@ -33,6 +33,19 @@ VRP.AddChatCommand( "givemoney", function( ply, args )
     } )
 end )
 
+VRP.AddChatCommand( "dropmoney", function( ply, args )
+    local amount = tonumber( args[1] )
+    if not amount or amount <= 0 then return VRP.GetPhrase( "no_input", ply:GetLanguage() ), 1 end
+    if not ply:CanAfford( amount ) then return VRP.GetPhrase( "not_enough_money", ply:GetLanguage() ), 1 end
+
+    VRP.CreateMoneyBag( ply:GetDroppableLookPos(), amount )
+
+    ply:AddMoney( -amount )
+    return VRP.GetPhrase( "drop_money", ply:GetLanguage(), {
+        amount = VRP.FormatMoney( amount ),
+    } )
+end )
+
 VRP.AddChatCommand( "setmoney", function( ply, args )
     if not ply:IsSuperAdmin() then return VRP.GetPhrase( "not_enough_privilege", ply:GetLanguage() ), 1 end
 
