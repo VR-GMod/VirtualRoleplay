@@ -1,0 +1,5 @@
+VRP.AddPlayerNetworkVar( "Bool", "GlobalVoice", false, false )
+VRP.AddPlayerNetworkVar( "Bool", "GlobalEars", false, false )
+VRP.AddPlayerNetworkVar( "Bool", "RadioEnabled", false, false )
+VRP.AddPlayerNetworkVar( "Float", "RadioFrequency", false, 0 )
+VRP.AddPlayerNetworkVar( "Int", "VoiceMode", false, 2 )
