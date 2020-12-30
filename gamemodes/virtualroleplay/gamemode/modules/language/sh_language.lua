@@ -8,12 +8,7 @@ end
 
 function VRP.AddPhrase( name, id, phrase )
     VRP.Languages[name] = VRP.Languages[name] or {}
-
-    if VRP.Languages[name][id] then
-        VRP.Print( "Phrase \"%s\" already in use for the lang \"%s\"", id, name )
-    else
-        VRP.Languages[name][id] = phrase
-    end
+    VRP.Languages[name][id] = phrase
 end
 
 function VRP.AddPhrases( name, tbl )
