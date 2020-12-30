@@ -14,38 +14,40 @@ end
 
 local infos = {
      {
-         left = "Name:",
+         left = "name",
          right = function( ply )
              return ply:GetRPName()
          end,
      },
      {
-         left = "Money:",
+         left = "money",
          right = function( ply )
              return VRP.FormatMoney( ply:GetMoney() ), color_white
          end,
      },
      {
-         left = "Job:",
+         left = "job",
          right = function( ply )
              return ply:GetJob().name, team.GetColor( ply:Team() )
          end,
      }
 }
 
+local font = "Trebuchet24"
 local lerp_health_ratio, lerp_armor_ratio = 1, 0
 function GM:HUDPaint()
     local ply = LocalPlayer()
-    local text_height = draw.GetFontHeight( "Trebuchet24" )
+    local text_height = draw.GetFontHeight( font )
     local text_space = text_height * 1.2
     space = ScrH() * .02
 
     --  get size
+    surface.SetFont( font )
     local box_w, box_h = 0, 0
     for i, v in ipairs( infos ) do
         local text = v.right( ply )
         local text_w, text_h = surface.GetTextSize( text )
-        box_w = math.max( box_w, text_w + surface.GetTextSize( v.left ) * 2 )
+        box_w = math.max( box_w, text_w + surface.GetTextSize( VRP.GetPhrase( v.left, ply:GetLanguage() ) ) * 2 )
         box_h = math.max( box_h, text_h )
     end
     box_h = box_h + text_space * #infos - text_height + space / 2
@@ -60,7 +62,7 @@ function GM:HUDPaint()
     for i, v in ipairs( infos ) do
         local text, color = v.right( ply )
 
-        draw.SimpleText( v.left, "Trebuchet24", x + space / 2, info_y + space / 3, color_white )
+        draw.SimpleText( VRP.GetPhrase( v.left, ply:GetLanguage() ) .. ":", "Trebuchet24", x + space / 2, info_y + space / 3, color_white )
         draw.SimpleText( text, "Trebuchet24", x + box_w - space / 2, info_y + space / 3, color, TEXT_ALIGN_RIGHT )
         info_y = info_y + text_space
     end
