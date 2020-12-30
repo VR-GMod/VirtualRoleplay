@@ -36,6 +36,14 @@ function GM:PlayerSpawn( ply, transition )
     ply:LoadJobLoadout( ply:Team() )
     ply:AllowFlashlight( true )
 
+    --  player color
+    local color = GetConVar( "cl_playercolor" ):GetString():Split( " " )
+    ply:SetPlayerColor( Vector( color[1], color[2], color[3] ) )
+
+    --  weapon color
+    local color = GetConVar( "cl_weaponcolor" ):GetString():Split( " " )
+    ply:SetWeaponColor( Vector( color[1], color[2], color[3] ) )
+
     --  call spawn functions
     hook.Call( "PlayerLoadout", self, ply )
     --hook.Call( "PlayerSetModel", self, ply )
