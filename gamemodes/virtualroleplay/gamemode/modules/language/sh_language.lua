@@ -6,6 +6,24 @@ function VRP.AddLanguage( name, tbl )
     VRP.Languages[name] = tbl
 end
 
+function VRP.AddPhrase( name, id, phrase )
+    VRP.Languages[name] = VRP.Languages[name] or {}
+
+    if VRP.Languages[name][id] then
+        VRP.Print( "Phrase \"%s\" already in use for the lang \"%s\"", id, name )
+    else
+        VRP.Languages[name][id] = phrase
+    end
+end
+
+function VRP.AddPhrases( name, tbl )
+    VRP.Languages[name] = VRP.Languages[name] or {}
+
+    for k, v in pairs( tbl ) do
+        VRP.AddPhrase( name, k, v )
+    end
+end
+
 function VRP.GetPhrase( name, lang_name, params )
     local phrase = ( VRP.Languages[lang_name] or VRP.Languages["en"] )[name]
     assert( phrase, ( "Phrase %q in language %q not found!" ):format( name, lang_name ) )
