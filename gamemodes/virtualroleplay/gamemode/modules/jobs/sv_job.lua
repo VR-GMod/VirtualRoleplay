@@ -21,7 +21,6 @@ function PLAYER:SetJob( job_id, model_id, is_forced, silent )
     --  team
     hook.Run( "VRP:ChangeJob", self, self:Team(), job_id )
     self:SetTeam( job_id )
-
     self:LoadJobLoadout( job_id, model_id )
 
     if not silent then
@@ -36,6 +35,9 @@ end
 function PLAYER:LoadJobLoadout( job_id, model_id )
     local job = VRP.Jobs[job_id]
 
+    --  setup
+    self:SetArmor( 0 )
+
     --  model
     model_id = model_id or math.random( #job.models )
     self:SetModel( job.models[model_id] )
@@ -46,6 +48,13 @@ function PLAYER:LoadJobLoadout( job_id, model_id )
     self:StripWeapons()
     for i, v in ipairs( job.weapons ) do
         self:Give( v )
+    end
+
+    --  ammos
+    if job.ammos then
+        for k, v in pairs( job.ammos ) do
+            self:GiveAmmo( v, k )
+        end
     end
 
     --  spawn
