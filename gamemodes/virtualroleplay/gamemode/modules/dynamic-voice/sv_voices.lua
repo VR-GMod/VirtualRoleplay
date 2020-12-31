@@ -51,21 +51,30 @@ VRP.AddChatCommand( "voice_mode", function( ply, args )
     return ( "Switched to %s mode." ):format( voice_modes[voice_mode].name )
 end )
 
-function GM:PlayerCanHearPlayersVoice( listener, talker )
-    if listener == talker then return false end
+function VRP.InHearableRadius( listener, talker )
+    return listener:GetPos():DistToSqr( talker:GetPos() ) < voice_modes[talker:GetVoiceMode()].radius
+end
+
+function VRP.CanHear( listener, talker )
     if not talker:Alive() then return false end
 
     if talker:GetGlobalVoice() or listener:GetGlobalEars() then
-        return true
+        return true, false, 1
     end
 
     if listener:GetRadioEnabled() and talker:GetRadioEnabled() and listener:GetRadioFrequency() == talker:GetRadioFrequency() then
-        return true
+        return true, false, 2
     end
 
-    if listener:GetPos():DistToSqr( talker:GetPos() ) < voice_modes[talker:GetVoiceMode()].radius then
-		return true, true
+    if VRP.InHearableRadius( listener, talker ) then
+		return true, true, 3
 	end
 
-    return false
+    return false, false, 0
+end
+
+function GM:PlayerCanHearPlayersVoice( listener, talker )
+    if listener == talker then return false end
+    
+    return VRP.CanHear( listener, talker )
 end
