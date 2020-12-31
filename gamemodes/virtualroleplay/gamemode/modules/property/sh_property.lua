@@ -1,19 +1,22 @@
 --  globals
-VRP.PropertyBuyAmount = 45
-VRP.PropertyCoOwnAmount = 15
-VRP.PropertySellAmount = 25
+VRP.PropertyMaxKeysBytes = 5 --  how many bits stocking the keys (default: 5 (31 keys))
+VRP.PropertyBuyAmount = 45 --  how much for buying a key
+VRP.PropertyCopyAmount = 30 --  how much for copying a key
+VRP.PropertySellAmount = 25 --  how much for selling a key
+VRP.PropertyClearKeysAmount = 150 --  how much for changing the keylock
+VRP.PropertyClearGiveKeys = 1 --  how many keys we give on changing the keylock
 VRP.PropertyClasses = {
     ["prop_door_rotating"] = true,
     ["func_door"] = true,
     ["func_door_rotating"] = true,
 }
 
-function VRP.GetDoors( only_owned )
+function VRP.GetDoors( callback )
     local doors = {}
 
     for class, v in pairs( VRP.PropertyClasses ) do
         for i, door in ipairs( ents.FindByClass( class ) ) do
-            if not only_owned or IsValid( door:GetPropertyOwner() ) then
+            if not callback or callback( door ) then
                 doors[#doors + 1] = door
             end
         end
@@ -39,10 +42,15 @@ function ENTITY:SetPropertyOwnable( toggle )
     self.vrp_ownable = toggle
 
     --  clear owners
-    if not toggle then
-        self:SetPropertyOwner( NULL )
-        self:ClearPropertyCoOwners() --  sync
-    elseif SERVER then
+    if SERVER then
+        if not toggle then
+            -- self:SetPropertyOwner( NULL )
+            -- self:ClearPropertyCoOwners() --  sync
+            for i, v in ipairs( self:GetPropertyOwners() ) do
+                v:RemovePropertyKeysOf( self )
+            end
+        end
+
         --  sync
         self:SyncPropertyData()
     end
@@ -53,86 +61,28 @@ function ENTITY:IsPropertyOwnable()
 end
 
 --  property accessors
-function ENTITY:SetPropertyOwner( ply )
-    if IsValid( ply ) and not self:IsPropertyOwnable() then return false end
-
-    self:SetNWEntity( "VRP:Owner", ply )
+function ENTITY:GetPropertyID()
+    return self:GetNWInt( "VRP:PropertyID", -1 )
 end
 
-function ENTITY:GetPropertyOwner()
-    return self:GetNWEntity( "VRP:Owner" )
-end
+--  player meta
+local PLAYER = FindMetaTable( "Player" )
 
---  co-owners
-function ENTITY:GetPropertyCoOwners()
-    return IsValid( self:GetPropertyOwner() ) and self.vrp_co_owners and table.Copy( self.vrp_co_owners )
-end
+function PLAYER:HasPropertyKeysOf( id )
+    if id < 0 then return false end --  -1 should not be a valid key ID
 
-function ENTITY:AddPropertyCoOwner( ply )
-    if not self:IsPropertyOwnable() then return false end
-
-    self.vrp_co_owners = self.vrp_co_owners or {}
-    self.vrp_co_owners[ply] = true
-
-    --  sync data
-    if SERVER then
-        self:SyncPropertyData()
-    end
-
-    return true
-end
-
-function ENTITY:RemovePropertyCoOwner( ply )
-    if self.vrp_co_owners[ply] then
-        self.vrp_co_owners[ply] = nil
-
-        --  sync data
-        if SERVER then
-            self:SyncPropertyData()
+    for i, v in ipairs( self.vrp_keys or {} ) do
+        if v.id == id then
+            return true
         end
-
-        return true
     end
 
     return false
 end
 
-function ENTITY:ClearPropertyCoOwners()
-    self.vrp_co_owners = {}
-
-    --  sync data
-    if SERVER then
-        self:SyncPropertyData()
-    end
+function PLAYER:HasPropertyKeysLimit()
+    return self.vrp_keys and #self.vrp_keys >= 2 ^ VRP.PropertyMaxKeysBytes - 1 or false
 end
-
-function ENTITY:IsPropertyCoOwnedBy( ply )
-    return self.vrp_co_owners and self.vrp_co_owners[ply] or false
-end
-
-function ENTITY:IsPropertyOwnedBy( ply )
-    return self:GetPropertyOwner() == ply
-end
-
-function ENTITY:ClearProperty()
-    if SERVER then
-        self:UnlockProperty()
-    end
-
-    self:SetPropertyOwner( NULL )
-    self:ClearPropertyCoOwners()
-end
-
-function ENTITY:GetPropertyData()
-    return {
-        --owner = self:GetPropertyOwner(),
-        co_owners = self.vrp_co_owners,
-        ownable = self:IsPropertyOwnable(),
-    }
-end
-
---  player meta
-local PLAYER = FindMetaTable( "Player" )
 
 function PLAYER:GetLookedDoor()
     local ent = self:GetEyeTrace().Entity

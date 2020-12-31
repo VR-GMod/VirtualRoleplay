@@ -1,5 +1,5 @@
 
-local good_diff_time = 1 --  seconds
+local good_diff_time = .5 --  seconds
 function VRP.NetworkReceiveAsMethods( uint_bytes, methods )
     local last_net_time = {}
     return function( len, ply )
@@ -18,4 +18,8 @@ function VRP.Format( text, params )
     return text:gsub( "%${([%w_%d]+)}", function( str )
         return params[str:Trim()] or "?"
     end )
+end
+
+function VRP.UpFirstLetter( text )
+    return text:sub( 1, 1 ):upper() .. text:sub( 2 )
 end

@@ -68,7 +68,8 @@ function SWEP:PrimaryAttack()
     if not door then return end
 
     --  lock
-    if door:IsPropertyOwnedBy( ply ) or door:IsPropertyCoOwnedBy( ply ) then
+    --if door:IsPropertyOwnedBy( ply ) or door:IsPropertyCoOwnedBy( ply ) then
+    if ply:HasPropertyKeysOf( door:GetPropertyID() ) then
         self:SetNextPrimaryFire( CurTime() + self.LockDelay )
 
         door:LockProperty()
@@ -88,7 +89,8 @@ function SWEP:SecondaryAttack()
     if not door then return end
 
     --  unlock
-    if door:IsPropertyOwnedBy( ply ) or door:IsPropertyCoOwnedBy( ply ) then
+    --if door:IsPropertyOwnedBy( ply ) or door:IsPropertyCoOwnedBy( ply ) then
+    if ply:HasPropertyKeysOf( door:GetPropertyID() ) then
         self:SetNextSecondaryFire( CurTime() + self.LockDelay )
 
         door:UnlockProperty()
@@ -101,23 +103,30 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:Reload()
-    if not SERVER then return end
     if not self.CanReload then return end
-
-    local ply = self:GetOwner()
-    local door = ply:GetLookedDoor()
-    if not door then return end
-
-    --  open menu
-    net.Start( "VRP:Property" )
-        net.WriteUInt( 0, 3 )
-    net.Send( ply )
 
     --  delay next reload
     self.CanReload = false
     timer.Simple( self.ReloadDelay, function()
         self.CanReload = true
     end )
+
+    local ply = self:GetOwner()
+    local door = ply:GetLookedDoor()
+    if not door then
+        if CLIENT then
+            VRP.OpenKeysInventory()
+        end
+        return
+    end
+
+    --  open menu
+    if SERVER then
+        net.Start( "VRP:Property" )
+            net.WriteUInt( 0, 3 )
+            net.WriteBool( #door:GetPropertyOwners() > 0 ) --  is_owned
+        net.Send( ply )
+    end
 end
 
 --  doors animations

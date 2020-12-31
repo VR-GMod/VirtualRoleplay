@@ -1,79 +1,77 @@
 util.AddNetworkString( "VRP:Property" )
 
 net.Receive( "VRP:Property", VRP.NetworkReceiveAsMethods( 3, {
-    --  buy/sell
+    --  buy
     [0] = function( ply )
         local door = ply:GetLookedDoor()
         if not door or not door:IsPropertyOwnable() then return end
 
-        local owner = door:GetPropertyOwner()
-        --  sell
-        if owner == ply then
-            door:ClearProperty()
-            ply:AddMoney( VRP.PropertySellAmount )
+        local owners = door:GetPropertyOwners()
+        if #owners > 0 then return end
 
-            VRP.Notify( ply, VRP.GetPhrase( "sell_something", ply:GetLanguage(), {
-                x = VRP.GetPhrase( "a_door", ply:GetLanguage() ),
-                amount = VRP.FormatMoney( VRP.PropertySellAmount ),
-            } ) )
-        --  buy
-        elseif not IsValid( owner ) then
-            if not ply:CanAfford( VRP.PropertyBuyAmount ) then
-                return VRP.Notify( ply, VRP.GetPhrase( "not_enough_money", ply:GetLanguage() ), 1 )
-            end
-
-            door:SetPropertyOwner( ply )
-            ply:AddMoney( -VRP.PropertyBuyAmount )
-
-            VRP.Notify( ply, VRP.GetPhrase( "buy_something", ply:GetLanguage(), {
-                x = VRP.GetPhrase( "a_door", ply:GetLanguage() ),
-                amount = VRP.FormatMoney( VRP.PropertyBuyAmount ),
+        if ply:HasPropertyKeysLimit() then
+            return VRP.Notify( ply, VRP.GetPhrase( "reach_limit_of", ply:GetLanguage(), {
+                x = VRP.GetPhrase( "key", ply:GetLanguage() ),
             } ) )
         end
-    end,
-    --  add co-owner
-    [1] = function( ply )
-        local door = ply:GetLookedDoor()
-        if not door or not door:IsPropertyOwnable() then return end
 
-        local owner = door:GetPropertyOwner()
-        if not ( owner == ply ) then return end
-
-        local co_owner = net.ReadEntity()
-        if not IsValid( co_owner ) or not co_owner:IsPlayer() then return end
-        if door:IsPropertyCoOwnedBy( co_owner ) then return end
-
-        --  owner pay co owning
-        if not ply:CanAfford( VRP.PropertyCoOwnAmount ) then
+        if not ply:CanAfford( VRP.PropertyBuyAmount ) then
             return VRP.Notify( ply, VRP.GetPhrase( "not_enough_money", ply:GetLanguage() ), 1 )
         end
 
-        door:AddPropertyCoOwner( co_owner )
-        ply:AddMoney( -VRP.PropertyCoOwnAmount )
+        --  generate property id if not already exists
+        if door:GetPropertyID() == -1 then --  get an ID
+            door:GeneratePropertyID()
+        end
 
-        VRP.Notify( ply, VRP.GetPhrase( "share_something", ply:GetLanguage(), {
+        --  add key
+        ply:AddPropertyKeysOf( door:GetPropertyID() )
+        ply:AddMoney( -VRP.PropertyBuyAmount )
+
+        --  notify
+        VRP.Notify( ply, VRP.GetPhrase( "buy_something", ply:GetLanguage(), {
             x = VRP.GetPhrase( "a_door", ply:GetLanguage() ),
-            name = co_owner:GetRPName(),
-            amount = VRP.FormatMoney( VRP.PropertyCoOwnAmount ),
+            amount = VRP.FormatMoney( VRP.PropertyBuyAmount ),
         } ) )
     end,
-    --  remove co-owner
+    --  create a copy of a key
+    [1] = function( ply )
+        local i = net.ReadUInt( VRP.PropertyMaxKeysBytes )
+        if not ply.vrp_keys[i] then return end
+        if ply:HasPropertyKeysLimit() then
+            return VRP.Notify( ply, VRP.GetPhrase( "reach_limit_of", ply:GetLanguage(), {
+                x = VRP.GetPhrase( "key", ply:GetLanguage() ),
+            } ) )
+        end
+
+        if not ply:CanAfford( VRP.PropertyCopyAmount ) then
+            return VRP.Notify( ply, VRP.GetPhrase( "not_enough_money", ply:GetLanguage() ), 1 )
+        end
+
+        --  add key
+        ply:AddPropertyKeysOf( ply.vrp_keys[i].id )
+        ply:AddMoney( -VRP.PropertyCopyAmount )
+
+        --  notify
+        VRP.Notify( ply, VRP.GetPhrase( "buy_something", ply:GetLanguage(), {
+            x = VRP.GetPhrase( "a_copy_key", ply:GetLanguage() ),
+            amount = VRP.FormatMoney( VRP.PropertyCopyAmount ),
+        } ) )
+    end,
+    --  drop key
     [2] = function( ply )
-        local door = ply:GetLookedDoor()
-        if not door or not door:IsPropertyOwnable() then return end
+        local i = net.ReadUInt( VRP.PropertyMaxKeysBytes )
+        if not ply.vrp_keys[i] then return end
 
-        local owner = door:GetPropertyOwner()
-        if not ( owner == ply ) then return end
+        local title = net.ReadString()
 
-        local co_owner = net.ReadEntity()
-        if not IsValid( co_owner ) or not co_owner:IsPlayer() then return end
-        if not door:IsPropertyCoOwnedBy( co_owner ) then return end
+        --  create key
+        VRP.CreatePropertyKey( ply:GetDroppableLookPos(), ply.vrp_keys[i].id, title or "Door Unknown" )
+        ply:RemovePropertyKeysOf( i, true )
 
-        door:RemovePropertyCoOwner( co_owner )
-
-        VRP.Notify( ply, VRP.GetPhrase( "remove_someone", ply:GetLanguage(), {
-            x = VRP.GetPhrase( "a_door", ply:GetLanguage() ),
-            name = co_owner:GetRPName(),
+        --  notify
+        VRP.Notify( ply, VRP.GetPhrase( "delete_something", ply:GetLanguage(), {
+            x = VRP.GetPhrase( "a_key", ply:GetLanguage() ),
         } ) )
     end,
     --  toggle ownable
@@ -85,11 +83,71 @@ net.Receive( "VRP:Property", VRP.NetworkReceiveAsMethods( 3, {
 
         door:SetPropertyOwnable( not door:IsPropertyOwnable() )
     end,
-    --  ask all properties sync
+    --  sell key
+    [4] = function( ply )
+        local i = net.ReadUInt( VRP.PropertyMaxKeysBytes )
+        if not ply.vrp_keys[i] then return end
+
+        local id = ply.vrp_keys[i].id
+        ply:RemovePropertyKeysOf( i, true )
+        ply:AddMoney( VRP.PropertySellAmount )
+
+        --  unlock doors
+        local doors = VRP.GetDoors( function( door )
+            return door:GetPropertyID() == id
+        end )
+        for i, door in ipairs( doors ) do
+            door:UnlockProperty()
+        end
+
+        VRP.Notify( ply, VRP.GetPhrase( "sell_something", ply:GetLanguage(), {
+            x = VRP.GetPhrase( "a_key", ply:GetLanguage() ),
+            amount = VRP.FormatMoney( VRP.PropertySellAmount ),
+        } ) )
+    end,
+    --  clear keys
     [5] = function( ply )
-        VRP.SyncAllPropertiesData( ply )
+        local door = ply:GetLookedDoor()
+        if not door or not door:IsPropertyOwnable() then return end
+        if not ply:HasPropertyKeysOf( door:GetPropertyID() ) then return end
+
+        if not ply:CanAfford( VRP.PropertyClearKeysAmount ) then
+            return VRP.Notify( ply, VRP.GetPhrase( "not_enough_money", ply:GetLanguage() ), 1 )
+        end
+
+        --  re-generate ID
+        door:GeneratePropertyID()
+        local id = door:GetPropertyID()
+        local doors = VRP.GetDoors( function( _door )
+            return not ( _door == door ) and _door:GetPropertyID() == id
+        end )
+        for i, door in ipairs( doors ) do
+            door:SetPropertyID( id )
+        end
+
+        --  new key
+        for i = 1, VRP.PropertyClearGiveKeys do
+            ply:AddPropertyKeysOf( id )
+        end
+        ply:AddMoney( -VRP.PropertyClearKeysAmount )
+
+        VRP.Notify( ply, VRP.GetPhrase( "clear_keys", ply:GetLanguage(), {
+            amount = VRP.FormatMoney( VRP.PropertyClearKeysAmount ),
+            n = VRP.PropertyClearGiveKeys,
+        } ) )
     end,
 } ) )
+
+function VRP.CreatePropertyKey( pos, id, title )
+    local key = ents.Create( "vrp_key" )
+    if not IsValid( key ) then return end
+    key:SetPos( pos )
+    key:Spawn()
+    key:SetPropertyID( id )
+    key:SetTitle( title )
+
+    return key
+end
 
 --  meta
 local ENTITY = FindMetaTable( "Entity" )
@@ -102,12 +160,28 @@ function ENTITY:UnlockProperty()
     self:Fire( "UnLock" )
 end
 
+function ENTITY:GetPropertyOwners()
+    local owners = {}
+
+    local door_id = self:GetPropertyID()
+    for i, v in ipairs( player.GetAll() ) do
+        if v:HasPropertyKeysOf( door_id ) then
+            owners[#owners + 1] = v
+        end
+    end
+
+    return owners
+end
+
 function ENTITY:SyncPropertyData( ply )
-    --  sync co-owners & ownable
+    --  sync if owning & ownable
     net.Start( "VRP:Property" )
         net.WriteUInt( 1, 3 )
         net.WriteEntity( self )
-        net.WriteTable( self:GetPropertyData() )
+        net.WriteTable( {
+            ownable = self:IsPropertyOwnable(),
+        } )
+        --net.WriteTable( self:GetPropertyData() )
     if ply then
         net.Send( ply )
     else
@@ -115,32 +189,59 @@ function ENTITY:SyncPropertyData( ply )
     end
 end
 
-function VRP.SyncAllPropertiesData( ply )
-    local data = {}
-    for i, door in ipairs( VRP.GetDoors( true ) ) do
-        data[door] = door:GetPropertyData()
-    end
-
-    --  send data
-    net.Start( "VRP:Property" )
-        net.WriteUInt( 2, 3 )
-        net.WriteTable( data )
-    net.Send( ply )
+--  property id
+local property_id = 1
+function ENTITY:GeneratePropertyID()
+    self:SetPropertyID( property_id )
+    property_id = property_id + 1
 end
 
---  remove property to disconnected players
-hook.Add( "PlayerDisconnected", "VRP:Property", function( ply )
-    local owned_count, co_owned_count = 0, 0
-    for i, door in ipairs( VRP.GetDoors( true ) ) do
-        if door:IsPropertyOwnedBy( ply ) then
-            door:ClearProperty()
-            owned_count = owned_count + 1
-        elseif door:IsPropertyCoOwnedBy( ply ) then
-            door:RemovePropertyCoOwner( ply )
-            co_owned_count = co_owned_count + 1
+function ENTITY:SetPropertyID( id )
+    assert( isnumber( id ), "#1 argument must be a number" )
+
+    self:SetNWInt( "VRP:PropertyID", id )
+end
+
+--  player meta
+local PLAYER = FindMetaTable( "Player" )
+
+function PLAYER:AddPropertyKeysOf( id, title )
+    self.vrp_keys = self.vrp_keys or {}
+    self.vrp_keys[#self.vrp_keys + 1] = {
+        id = id,
+        title = title,
+        --  other infos
+    }
+
+    --  sync
+    net.Start( "VRP:Property" )
+        net.WriteUInt( 2, 3 )
+        net.WriteString( "add" )
+        net.WriteTable( self.vrp_keys[#self.vrp_keys] )
+    net.Send( self )
+end
+
+function PLAYER:RemovePropertyKeysOf( id, is_table_index )
+    self.vrp_keys = self.vrp_keys or {}
+
+    local index = is_table_index and id
+    if not is_table_index then
+        for i, v in ipairs( self.vrp_keys ) do
+            if v.id == id then
+                index = i
+                break
+            end
         end
     end
 
-    if owned_count <= 0 and co_owned_count <= 0 then return end
-    VRP.Print( "removed %d owned properties and %d co-owned properties of %s", owned_count, co_owned_count, ply:GetRPName() )
-end )
+    if index then
+        table.remove( self.vrp_keys, index )
+
+        --  sync
+        net.Start( "VRP:Property" )
+            net.WriteUInt( 2, 3 )
+            net.WriteString( "remove" )
+            net.WriteUInt( index, 5 )
+        net.Send( self )
+    end
+end

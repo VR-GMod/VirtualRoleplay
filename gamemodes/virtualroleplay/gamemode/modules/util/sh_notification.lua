@@ -16,8 +16,12 @@ if SERVER then
         end
     end
 else
-    net.Receive( "VRP:Notify", function()
-        notification.AddLegacy( net.ReadString(), net.ReadUInt( type_bytes ), net.ReadUInt( length_bytes ) )
+    function VRP.Notify( text, type, length )
+        notification.AddLegacy( text, type or 0, length or 3 )
         surface.PlaySound( "buttons/lightswitch2.wav" )
+    end
+
+    net.Receive( "VRP:Notify", function()
+        VRP.Notify( net.ReadString(), net.ReadUInt( type_bytes ), net.ReadUInt( length_bytes ) )
     end )
 end
