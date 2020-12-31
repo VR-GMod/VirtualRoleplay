@@ -21,19 +21,20 @@ end
 local mat = Material( "voice/icntlk_sv" )
 local size = 64
 local voice_modes = {
-    "whisper",
-    "talk",
-    "shout"
+    "whispering",
+    "talking",
+    "yelling"
 }
 hook.Add( "HUDPaint", "VRP:ShowTalking", function()
-    if not LocalPlayer():IsSpeaking() then return end
+    local ply = LocalPlayer()
+    if not ply:IsSpeaking() then return end
     local w, h = ScrW(), ScrH()
 
     surface.SetDrawColor( 255, 255, 255 )
     surface.SetMaterial( mat )
     surface.DrawTexturedRect( w - size * 1.5, h / 2 - size / 2, size, size )
 
-    draw.SimpleText( voice_modes[LocalPlayer():GetVoiceMode()], "Trebuchet24", w - size * 1.5 - 4, h / 2, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+    draw.SimpleText( VRP.GetPhrase( voice_modes[ply:GetVoiceMode()], ply:GetLanguage() ), "Trebuchet24", w - size * 1.5 - 4, h / 2, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 end )
 
 hook.Add( "HUDShouldDraw", "VRP:HideTalkIcon", function( name )

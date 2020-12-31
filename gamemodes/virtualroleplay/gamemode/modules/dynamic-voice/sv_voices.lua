@@ -5,21 +5,25 @@ end )
 
 --  > Global voice and ears
 VRP.AddChatCommand( "global_voice", function( ply, args )
-    if not ply:IsSuperAdmin() then return "You must be a SuperAdmin", 1 end
+    if not ply:IsSuperAdmin() then return VRP.GetPhrase( no_access_command, ply:GetLanguage() ), 1 end
 
     local global_voice = not ply:GetGlobalVoice()
     ply:SetGlobalVoice( global_voice )
 
-    return ( "You %s global voice mode." ):format( global_voice and "enabled" or "disabled" )
+    return VRP.GetPhrase( "global_voice_toggle", ply:GetLanguage(), {
+        toggled = VRP.GetPhrase( enabled and "enabled" or "disabled", ply:GetLanguage() )
+    } )
 end )
 
 VRP.AddChatCommand( "global_ears", function( ply, args )
-    if not ply:IsSuperAdmin() then return "You must be a SuperAdmin", 1 end
+    if not ply:IsSuperAdmin() then return VRP.GetPhrase( no_access_command, ply:GetLanguage() ), 1 end
 
     local global_ears = not ply:GetGlobalEars()
     ply:SetGlobalEars( global_ears )
 
-    return ( "You %s global ears mode." ):format( global_ears and "enabled" or "disabled" )
+    return VRP.GetPhrase( "global_ears_toggle", ply:GetLanguage(), {
+        toggled = VRP.GetPhrase( enabled and "enabled" or "disabled", ply:GetLanguage() )
+    } )
 end )
 
 --  > Radio
@@ -27,28 +31,32 @@ VRP.AddChatCommand( "radiofreq", function( ply, args )
     local freq = math.max( 1, tonumber( args[1] or 1 ) )
     ply:SetRadioFrequency( freq )
 
-    return ( "Switched radio channel to %sHz." ):format( freq )
+    return VRP.GetPhrase( "radio_channel_switch", ply:GetLanguage(), { frequency = freq } )
 end )
 
 VRP.AddChatCommand( "radio", function( ply, args )
     local enabled = not ply:GetRadioEnabled()
     ply:SetRadioEnabled( enabled )
 
-    return ( "Turned %s the radio." ):format( enabled and "on" or "off" )
+    return VRP.GetPhrase( "radio_toggle", ply:GetLanguage(), {
+        toggled = VRP.GetPhrase( enabled and "on" or "off", ply:GetLanguage() )
+    } )
 end )
 
 --  > I wanna scream, and shout, and let it all out
 local voice_modes = {
-    { name = "whisper", radius = 20000 },
-    { name = "talk", radius = 100000 },
-    { name = "shout", radius = 200000 },
+    { name = "whispering", radius = 20000 },
+    { name = "talking", radius = 100000 },
+    { name = "yelling", radius = 200000 },
 }
 
 VRP.AddChatCommand( "voice_mode", function( ply, args )
     local voice_mode = math.Clamp( tonumber( args[1] or 1 ), 1, 3 )
     ply:SetVoiceMode( voice_mode )
 
-    return ( "Switched to %s mode." ):format( voice_modes[voice_mode].name )
+    return VRP.GetPhrase( "voice_mode_switch", ply:GetLanguage(), {
+        name = VRP.GetPhrase( voice_modes[ply:GetVoiceMode()].name, ply:GetLanguage(), { name = voice_modes[voice_mode].name } )
+    } )
 end )
 
 function VRP.InHearableRadius( listener, talker )

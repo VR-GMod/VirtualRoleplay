@@ -49,9 +49,13 @@ end )
 
 VRP.AddChatCommand( "roll", function( ply, args )
     local result = math.random( 0, 100 )
+
     for k, v in ipairs( player.GetHumans() ) do
         if not VRP.InHearableRadius( v, ply ) then continue end
 
-        v:PrintChat( team.GetColor( ply:Team() ), "** ", ply:GetName(), " rolled a " .. result )
+        v:PrintChat( team.GetColor( ply:Team() ), "** ", VRP.GetPhrase( "rolled_a", ply:GetLanguage(), {
+            name = ply:GetName(),
+            number = result
+        } ) )
     end
 end )
