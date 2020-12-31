@@ -2,6 +2,11 @@
 VRP.AddLanguage( "fr", {
     title = "Titre",
     nothing = "Rien à faire.",
+    enabled = "activé",
+    disabled = "désactivé",
+    on = "allumé",
+    off = "éteint",
+    no_access_command = "Sorry but you can't use this command.",
     no_input = "Vous devez donner une saisie valide!",
     look_someone_or_closer = "Vous devez regarder quelqu'un ou en être plus proche!",
     not_enough_privilege = "Vous n'avez pas les privilèges nécessaires pour faire cette action!",
@@ -49,4 +54,14 @@ VRP.AddLanguage( "fr", {
     delete_something = "Vous avez supprimé ${x}.",
     open_property_menu = "Appuyez sur R ou sur la touche de rechargement avec les Clés en main pour ouvrir le menu de propriété.",
     open_keys_inventory = "Ouvrir le trousseau de clés",
+
+    global_voice_toggle = "Vous avez ${toggled} la voix globale.",
+    global_ears_toggle = "Vous avez ${toggled} les oreilles absolues.",
+    radio_channel_switch = "Vous êtes passé sur le canal ${frequency}Hz.",
+    radio_toggle = "Vous avez ${toggled} la radio.",
+    voice_mode_switch = "Vous parlez en ${name}.",
+    whispering = "Chuchotant",
+    talking = "Normal",
+    yelling = "Hurlant",
+    rolled_a = "${name} a fait un ${number}",
 } )

@@ -2,7 +2,7 @@
 VRP = VRP or {}
 
 function VRP.Print( txt, ... )
-    print( "Virtual Roleplay: " .. ( #{ ... } == 0 and txt or txt:format( ... ) ) )
+    MsgC( Color( 6, 151, 241 ), "[Virtual Roleplay] ", color_white, ( #{ ... } == 0 and txt or txt:format( ... ) ), "\n" )
 end
 
 --  network vars
