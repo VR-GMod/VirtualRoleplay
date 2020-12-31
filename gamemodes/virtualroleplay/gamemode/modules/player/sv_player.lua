@@ -17,7 +17,7 @@ function GM:PlayerInitialSpawn( ply )
             end
 
             --  load data
-            if not VRP.LoadPlayerNetworksVars( ply ) then
+            if not ply:IsBot() and not VRP.LoadPlayerNetworksVars( ply ) then
                 VRP.SQLNewPlayer( ply )
                 VRP.Print( "new player (%s)", ply:SteamName() )
             end
@@ -37,11 +37,11 @@ function GM:PlayerSpawn( ply, transition )
     ply:AllowFlashlight( true )
 
     --  player color
-    local color = GetConVar( "cl_playercolor" ):GetString():Split( " " )
+    local color = ply:GetInfo( "cl_playercolor" ):Split( " " )
     ply:SetPlayerColor( Vector( color[1], color[2], color[3] ) )
 
     --  weapon color
-    local color = GetConVar( "cl_weaponcolor" ):GetString():Split( " " )
+    local color = ply:GetInfo( "cl_weaponcolor" ):Split( " " )
     ply:SetWeaponColor( Vector( color[1], color[2], color[3] ) )
 
     --  call spawn functions

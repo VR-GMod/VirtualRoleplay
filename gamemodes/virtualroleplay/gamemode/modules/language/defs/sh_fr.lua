@@ -1,9 +1,9 @@
 
 VRP.AddLanguage( "fr", {
-    a_door = "une porte",
     nothing = "Rien à faire.",
     no_input = "Vous devez donner une saisie valide!",
     look_someone_or_closer = "Vous devez regarder quelqu'un ou en être plus proche!",
+    not_enough_privilege = "Vous n'avez pas les privilèges nécessaires pour faire cette action!",
 
     name = "Nom",
     change_name = "${old} a changé son nom en ${new}.",
@@ -15,8 +15,8 @@ VRP.AddLanguage( "fr", {
     give_money = "Vous avez donné ${amount} à ${name}.",
     drop_money = "Vous avez laché ${amount} par terre.",
     set_money = "Vous avez mis votre argent à ${amount}.",
-    buy_something = "Vous avez acheté ${name} pour ${amount}.",
-    sell_something = "Vous avez vendu ${name} pour ${amount}.",
+    buy_something = "Vous avez acheté ${x} pour ${amount}.",
+    sell_something = "Vous avez vendu ${x} pour ${amount}.",
     share_something = "Vous avez partagé ${x} à ${name} pour ${amount}.",
     sell = "Vendre pour ${amount}.",
     buy = "Acheter pour ${amount}.",
@@ -29,5 +29,12 @@ VRP.AddLanguage( "fr", {
     become_job = "${name} est devenu ${job}.",
     pay_job = "Vous avez été payé ${amount} pour exercer votre métier.",
 
-    add_co_owner = "Ajouter un co-propriétaire"
+    owner = "propriétaire",
+    co_owner = "co-propriétaire",
+    a_door = "une porte",
+    add_co_owner = "Ajouter un co-propriétaire",
+    remove_co_owner = "Retirer un co-propriétaire",
+    remove_someone = "Vous avez retirer ${name} de ${x}.",
+    toggle_ownable = "Activer/désactiver la possession",
+    open_property_menu = "Appuyez sur R ou sur la touche de rechargement avec les Clés en main pour ouvrir le menu de propriété.",
 } )

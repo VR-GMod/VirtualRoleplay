@@ -26,7 +26,7 @@ SWEP.ReloadDelay = .5
 
 SWEP.CanReload = true
 
-local function fire_door( door, ply )
+local function anim_toggle_door( door, ply )
     door:EmitSound( ( "npc/metropolice/gear%d.wav" ):format( math.random( 6 ) ) )
 
     timer.Simple( .2, function()
@@ -67,11 +67,13 @@ function SWEP:PrimaryAttack()
     local door = ply:GetLookedDoor()
     if not door then return end
 
+    --  lock
     if door:IsPropertyOwnedBy( ply ) or door:IsPropertyCoOwnedBy( ply ) then
         self:SetNextPrimaryFire( CurTime() + self.LockDelay )
 
         door:LockProperty()
-        fire_door( door, ply, "Lock" )
+        anim_toggle_door( door, ply )
+    --  knock
     else
         self:SetNextPrimaryFire( CurTime() + self.KnockDelay )
         knock( ply, "physics/wood/wood_crate_impact_hard2.wav" )
@@ -85,11 +87,13 @@ function SWEP:SecondaryAttack()
     local door = ply:GetLookedDoor()
     if not door then return end
 
+    --  unlock
     if door:IsPropertyOwnedBy( ply ) or door:IsPropertyCoOwnedBy( ply ) then
         self:SetNextSecondaryFire( CurTime() + self.LockDelay )
 
         door:UnlockProperty()
-        fire_door( door, ply, "UnLock" )
+        anim_toggle_door( door, ply )
+    --  knock
     else
         self:SetNextSecondaryFire( CurTime() + self.KnockDelay )
         knock( ply, "physics/wood/wood_crate_impact_hard3.wav" )
@@ -104,6 +108,7 @@ function SWEP:Reload()
     local door = ply:GetLookedDoor()
     if not door then return end
 
+    --  open menu
     net.Start( "VRP:Property" )
         net.WriteUInt( 0, 3 )
     net.Send( ply )

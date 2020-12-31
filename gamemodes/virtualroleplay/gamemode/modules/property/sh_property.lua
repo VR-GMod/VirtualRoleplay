@@ -2,18 +2,32 @@
 VRP.PropertyBuyAmount = 45
 VRP.PropertyCoOwnAmount = 15
 VRP.PropertySellAmount = 25
+VRP.PropertyClasses = {
+    ["prop_door_rotating"] = true,
+    ["func_door"] = true,
+    ["func_door_rotating"] = true,
+}
+
+function VRP.GetDoors( only_owned )
+    local doors = {}
+
+    for class, v in pairs( VRP.PropertyClasses ) do
+        for i, door in ipairs( ents.FindByClass( class ) ) do
+            if not only_owned or IsValid( door:GetPropertyOwner() ) then
+                doors[#doors + 1] = door
+            end
+        end
+    end
+
+    return doors
+end
 
 --  entity meta
 local ENTITY = FindMetaTable( "Entity" )
 
 --  class checks
-local door_classes = {
-    ["prop_door_rotating"] = true,
-    ["func_door"] = true,
-    ["func_door_rotating"] = true,
-}
 function ENTITY:IsDoor()
-    return door_classes[self:GetClass()]
+    return VRP.PropertyClasses[self:GetClass()]
 end
 
 function ENTITY:IsClassOwnable()
@@ -27,7 +41,10 @@ function ENTITY:SetPropertyOwnable( toggle )
     --  clear owners
     if not toggle then
         self:SetPropertyOwner( NULL )
-        self:ClearCoOwners()
+        self:ClearPropertyCoOwners() --  sync
+    elseif SERVER then
+        --  sync
+        self:SyncPropertyData()
     end
 end
 
@@ -37,7 +54,7 @@ end
 
 --  property accessors
 function ENTITY:SetPropertyOwner( ply )
-    if not self:IsPropertyOwnable() then return false end
+    if IsValid( ply ) and not self:IsPropertyOwnable() then return false end
 
     self:SetNWEntity( "VRP:Owner", ply )
 end
@@ -57,12 +74,23 @@ function ENTITY:AddPropertyCoOwner( ply )
     self.vrp_co_owners = self.vrp_co_owners or {}
     self.vrp_co_owners[ply] = true
 
+    --  sync data
+    if SERVER then
+        self:SyncPropertyData()
+    end
+
     return true
 end
 
 function ENTITY:RemovePropertyCoOwner( ply )
     if self.vrp_co_owners[ply] then
         self.vrp_co_owners[ply] = nil
+
+        --  sync data
+        if SERVER then
+            self:SyncPropertyData()
+        end
+
         return true
     end
 
@@ -71,6 +99,11 @@ end
 
 function ENTITY:ClearPropertyCoOwners()
     self.vrp_co_owners = {}
+
+    --  sync data
+    if SERVER then
+        self:SyncPropertyData()
+    end
 end
 
 function ENTITY:IsPropertyCoOwnedBy( ply )
@@ -79,6 +112,23 @@ end
 
 function ENTITY:IsPropertyOwnedBy( ply )
     return self:GetPropertyOwner() == ply
+end
+
+function ENTITY:ClearProperty()
+    if SERVER then
+        self:UnlockProperty()
+    end
+
+    self:SetPropertyOwner( NULL )
+    self:ClearPropertyCoOwners()
+end
+
+function ENTITY:GetPropertyData()
+    return {
+        --owner = self:GetPropertyOwner(),
+        co_owners = self.vrp_co_owners,
+        ownable = self:IsPropertyOwnable(),
+    }
 end
 
 --  player meta

@@ -1,9 +1,9 @@
 
 VRP.AddLanguage( "en", {
-    a_door = "a door",
     nothing = "Nothing",
     no_input = "You must enter a valid input!",
     look_someone_or_closer = "You must look at someone or be closer!",
+    not_enough_privilege = "You don't have the necessited privileges to do this!",
 
     name = "Name",
     change_name = "${old} changed his name to ${new}.",
@@ -29,5 +29,12 @@ VRP.AddLanguage( "en", {
     become_job = "${name} became ${job}.",
     pay_job = "You have been paid ${amount} for your work.",
 
+    owner = "owner",
+    co_owner = "co-owner",
+    a_door = "a door",
     add_co_owner = "Add a co-owner",
+    remove_co_owner = "Remove a co-owner",
+    remove_someone = "You removed ${name} from ${x}.",
+    toggle_ownable = "Toggle ownable",
+    open_property_menu = "Press R or the Reload key with your keys in hands to open the property menu.",
 } )
