@@ -23,11 +23,11 @@ function GM:PlayerSay( ply, txt, bTeam )
         if not can_hear then continue end
         local team_col = team.GetColor( ply:Team() )
 
-        if ( tchat == 1 and ply:GetGlobalEars() and VRP.InHearableRadius( v, ply ) ) or ( tchat == 2 and v ~= ply ) then
+        if VRP.InHearableRadius( v, ply ) and ( ( tchat == 1 and ply:GetGlobalEars() ) or ( tchat == 2 and v ~= ply ) ) then
             v:PrintChat( team_col, ply:GetName(), ": ", color_white, txt )
 
-            if tchat == 1 then continue end
-        end
+            continue
+        end      
 
         v:PrintChat(
             tchats[tchat] and tchats[tchat].color or team_col,
