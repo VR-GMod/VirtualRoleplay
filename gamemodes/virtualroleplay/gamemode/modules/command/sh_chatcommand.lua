@@ -23,7 +23,7 @@ function VRP.HandleChatCommand( ply, text )
                 end
             end
 
-            return ""
+            return false
         end
     end
 
@@ -31,11 +31,7 @@ function VRP.HandleChatCommand( ply, text )
     return text
 end
 
-if SERVER then
-    function GM:PlayerSay( ply, text, is_team_chat )
-        return VRP.HandleChatCommand( ply, text )
-    end
-else
+if CLIENT then
     function GM:OnPlayerChat( ply, text, is_team_chat, is_dead )
         if ply == LocalPlayer() then
             return not ( VRP.HandleChatCommand( ply, text ) == text )
