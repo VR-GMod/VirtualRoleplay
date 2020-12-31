@@ -1,4 +1,4 @@
---  > Adding ugly default icon
+--  > Removing ugly default icon
 hook.Add( "PostGamemodeLoaded", "VRP:DisableTalkIcon", function()
     game.ConsoleCommand( "mp_show_voice_icons 0\n" )
 end )
@@ -24,7 +24,7 @@ end )
 
 --  > Radio
 VRP.AddChatCommand( "radiofreq", function( ply, args )
-    local freq = tonumber( args[1] )
+    local freq = math.max( 1, tonumber( args[1] or 1 ) )
     ply:SetRadioFrequency( freq )
 
     return ( "Switched radio channel to %sHz." ):format( freq )
