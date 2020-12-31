@@ -38,3 +38,20 @@ function GM:PlayerSay( ply, txt, bTeam )
 
     return false
 end
+
+VRP.AddChatCommand( "me", function( ply, args )
+    for k, v in ipairs( player.GetHumans() ) do
+        if not VRP.InHearableRadius( v, ply ) then continue end
+
+        v:PrintChat( team.GetColor( ply:Team() ), "* ", ply:GetName(), " ", table.concat( args, " " ) )
+    end
+end )
+
+VRP.AddChatCommand( "roll", function( ply, args )
+    local result = math.random( 0, 100 )
+    for k, v in ipairs( player.GetHumans() ) do
+        if not VRP.InHearableRadius( v, ply ) then continue end
+
+        v:PrintChat( team.GetColor( ply:Team() ), "** ", ply:GetName(), " rolled a " .. result )
+    end
+end )
