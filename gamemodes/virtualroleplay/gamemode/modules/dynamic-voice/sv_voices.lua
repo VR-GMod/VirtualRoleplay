@@ -5,7 +5,7 @@ end )
 
 --  > Global voice and ears
 VRP.AddChatCommand( "global_voice", function( ply, args )
-    if not ply:IsSuperAdmin() then return VRP.GetPhrase( no_access_command, ply:GetLanguage() ), 1 end
+    if not ply:IsSuperAdmin() then return VRP.GetPhrase( "no_access_command", ply:GetLanguage() ), 1 end
 
     local global_voice = not ply:GetGlobalVoice()
     ply:SetGlobalVoice( global_voice )
@@ -16,7 +16,7 @@ VRP.AddChatCommand( "global_voice", function( ply, args )
 end )
 
 VRP.AddChatCommand( "global_ears", function( ply, args )
-    if not ply:IsSuperAdmin() then return VRP.GetPhrase( no_access_command, ply:GetLanguage() ), 1 end
+    if not ply:IsSuperAdmin() then return VRP.GetPhrase( "no_access_command", ply:GetLanguage() ), 1 end
 
     local global_ears = not ply:GetGlobalEars()
     ply:SetGlobalEars( global_ears )
