@@ -43,9 +43,9 @@ local voice_modes = {
     { name = "talk", radius = 100000 },
     { name = "shout", radius = 200000 },
 }
+
 VRP.AddChatCommand( "voice_mode", function( ply, args )
     local voice_mode = math.Clamp( tonumber( args[1] or 1 ), 1, 3 )
-
     ply:SetVoiceMode( voice_mode )
 
     return ( "Switched to %s mode." ):format( voice_modes[voice_mode].name )
@@ -67,8 +67,8 @@ function VRP.CanHear( listener, talker )
     end
 
     if VRP.InHearableRadius( listener, talker ) then
-		return true, true, 3
-	end
+        return true, true, 3
+    end
 
     return false, false, 0
 end
