@@ -28,7 +28,7 @@ VRP.AddChatCommand( "sethunger", function( ply, args )
     if not amount or amount < 0 then return "You must specify the amount!", 1 end
 
     ply:SetHunger( amount )
-    return ( "You set your hunger to %s!" ):format( amount )
+    return string.format( "You set your hunger to %s!", amount )
 end )
 
 
@@ -38,5 +38,5 @@ VRP.AddChatCommand( "resethunger", function( ply, args )
     local amount = tonumber( args[1] )
 
     ply:SetHunger( VRP.HungerStartAmount )
-    return ( "You reset your hunger!" )
+    return "You reset your hunger!"
 end )
