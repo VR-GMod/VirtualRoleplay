@@ -52,12 +52,12 @@ function GM:HUDPaint()
     end
 
     x = x + 2
-    y = y + 5
+    y = y + ( VRP.HungerEnabled and 3 or 5 )
 
     --  > Animations
     health = Lerp( FrameTime() * 5, health, ply:Health() )
     armor = Lerp( FrameTime() * 5, armor, ply:Armor() )
-    --hunger = Lerp( FrameTime() * 5, armor, ply:GetHunger() )
+    hunger = Lerp( FrameTime() * 5, hunger, ply:GetHunger() )
 
     local armor_w = armor <= 0.9 and 0 or math.min( math.ceil( armor ), total_w / 2 )
     local health_w = ( total_w - armor_w ) * math.min( 100, health ) / 100
@@ -83,6 +83,10 @@ function GM:HUDPaint()
             draw.SimpleText( armor_text, "VRP:HUD18", x + health_w + armor_w - 5, y + 10, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
         end
     end
+
+    --  > Hunger
+    surface.SetDrawColor( color_hunger )
+    surface.DrawRect( x, y + 20, total_w * hunger / 100, 4 )
 end
 
 local hide = {
