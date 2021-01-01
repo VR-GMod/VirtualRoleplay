@@ -9,6 +9,7 @@ PLAYER.DefaultWeapons = {
     "weapon_fists",
     "gmod_tool",
     "gmod_camera",
+    "vrp_keys",
 }
 
 function PLAYER:SetupDataTables()

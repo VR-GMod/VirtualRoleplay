@@ -95,6 +95,7 @@ local function require_folder( path, level )
 end
 
 VRP.Print( "loading core files" )
+require_folder( "libraries" )
 require_folder( "modules" )
 
 function GM:Initialize()

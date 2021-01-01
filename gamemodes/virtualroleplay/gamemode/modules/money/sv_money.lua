@@ -21,14 +21,15 @@ VRP.AddChatCommand( "givemoney", function( ply, args )
 
     local format_money = VRP.FormatMoney( amount )
     target:AddMoney( amount )
-    VRP.Notify( target, VRP.GetPhrase( "receive_money", ply:GetLanguage(), {
-        amount = format_money,
+    VRP.Notify( target, VRP.GetPhrase( "receive_something", ply:GetLanguage(), {
+        x = format_money,
         name = ply:GetRPName(),
     } ) )
 
     ply:AddMoney( -amount )
-    return VRP.GetPhrase( "give_money", ply:GetLanguage(), {
-        amount = format_money,
+    
+    return VRP.GetPhrase( "give_something", ply:GetLanguage(), {
+        x = format_money,
         name = target:GetRPName(),
     } )
 end )
@@ -41,8 +42,9 @@ VRP.AddChatCommand( "dropmoney", function( ply, args )
     VRP.CreateMoneyBag( ply:GetDroppableLookPos(), amount )
 
     ply:AddMoney( -amount )
-    return VRP.GetPhrase( "drop_money", ply:GetLanguage(), {
-        amount = VRP.FormatMoney( amount ),
+
+    return VRP.GetPhrase( "drop_something", ply:GetLanguage(), {
+        x = VRP.FormatMoney( amount ),
     } )
 end )
 

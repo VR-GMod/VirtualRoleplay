@@ -4,7 +4,7 @@ AddCSLuaFile( "shared.lua" )
 include( "shared.lua" )
 
 function ENT:Initialize()
-    self:SetModel( "models/props/cs_assault/Money.mdl" )
+    self:SetModel( "models/props_c17/TrapPropeller_Lever.mdl" )
 	self:PhysicsInit( SOLID_VPHYSICS )
 	self:SetMoveType( MOVETYPE_VPHYSICS )
 	self:SetSolid( SOLID_VPHYSICS )
@@ -21,14 +21,18 @@ end
 
 function ENT:Use( ply )
     if not IsValid( ply ) or not ply:IsPlayer() then return end
+    if ply:HasPropertyKeysLimit() then
+        return VRP.Notify( ply, VRP.GetPhrase( "reach_limit_of", ply:GetLanguage(), {
+            x = VRP.GetPhrase( "key", ply:GetLanguage() ),
+        } ) )
+    end
 
     --  give money
-    local amount = self:GetMoney()
-    ply:AddMoney( amount )
+    ply:AddPropertyKeysOf( self:GetPropertyID(), self:GetTitle() )
     self:Remove()
 
     --  notify
     VRP.Notify( ply, VRP.GetPhrase( "find_something", ply:GetLanguage(), {
-        x = VRP.FormatMoney( amount ),
+        x = self:GetTitle(),
     } ) )
 end
