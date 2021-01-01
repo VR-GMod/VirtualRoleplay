@@ -29,16 +29,10 @@ SWEP.CanReload = true
 local function anim_toggle_door( door, ply )
     door:EmitSound( ( "npc/metropolice/gear%d.wav" ):format( math.random( 6 ) ) )
 
-    timer.Simple( .2, function()
-        if IsValid( door ) then
-            door:EmitSound( "doors/door_latch3.wav" )
-        end
-    end )
-
     --  anim
     net.Start( "VRP:DoorAnimations" )
         net.WriteEntity( ply )
-        net.WriteUInt( 1, 1 )
+        net.WriteBit( true )
     net.SendPVS( ply:GetPos() )
 end
 
@@ -48,7 +42,7 @@ local function knock( ply, sound )
     --  anim
     net.Start( "VRP:DoorAnimations" )
         net.WriteEntity( ply )
-        net.WriteUInt( 0, 1 )
+        net.WriteBit( false )
     net.SendPVS( ply:GetPos() )
 end
 
@@ -68,7 +62,6 @@ function SWEP:PrimaryAttack()
     if not door then return end
 
     --  lock
-    --if door:IsPropertyOwnedBy( ply ) or door:IsPropertyCoOwnedBy( ply ) then
     if ply:HasPropertyKeysOf( door:GetPropertyID() ) then
         self:SetNextPrimaryFire( CurTime() + self.LockDelay )
 
@@ -89,7 +82,6 @@ function SWEP:SecondaryAttack()
     if not door then return end
 
     --  unlock
-    --if door:IsPropertyOwnedBy( ply ) or door:IsPropertyCoOwnedBy( ply ) then
     if ply:HasPropertyKeysOf( door:GetPropertyID() ) then
         self:SetNextSecondaryFire( CurTime() + self.LockDelay )
 
@@ -122,9 +114,8 @@ function SWEP:Reload()
 
     --  open menu
     if SERVER then
-        net.Start( "VRP:Property" )
-            net.WriteUInt( 0, 3 )
-            net.WriteBool( #door:GetPropertyOwners() > 0 ) --  is_owned
+        net.Start( "VRP:PropertyMenu" )
+            net.WriteBool( door:IsPropertyOwned() ) --  is_owned
         net.Send( ply )
     end
 end
@@ -133,15 +124,15 @@ end
 if SERVER then
     util.AddNetworkString( "VRP:DoorAnimations" )
 else
-    local methods = {
+    local anims = {
         [0] = ACT_HL2MP_GESTURE_RANGE_ATTACK_FIST, --  knock
         [1] = ACT_GMOD_GESTURE_ITEM_PLACE, --  lock/unlock
     }
 
     net.Receive( "VRP:DoorAnimations", function( len )
         local ply = net.ReadEntity()
-        local method = net.ReadUInt( 1 )
+        local anim = net.ReadBit()
 
-        ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, methods[method], true )
+        ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, anims[anim], true )
     end )
 end

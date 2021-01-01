@@ -84,10 +84,11 @@ function PLAYER:HasPropertyKeysLimit()
     return self.vrp_keys and #self.vrp_keys >= 2 ^ VRP.PropertyMaxKeysBytes - 1 or false
 end
 
+local dist = 74 ^ 2
 function PLAYER:GetLookedDoor()
     local ent = self:GetEyeTrace().Entity
     if not IsValid( ent ) or not ent:IsClassOwnable() then return end
-    if ent:GetPos():Distance( self:GetPos() ) > 74 then return end
+    if ent:GetPos():DistToSqr( self:GetPos() ) > dist then return end
 
     return ent
 end

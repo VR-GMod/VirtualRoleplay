@@ -17,6 +17,8 @@ if SERVER then
     end
 else
     function VRP.Notify( text, type, length )
+        assert( isstring( text ) and #text > 0, "#1 argument must be a non-empty string" )
+
         notification.AddLegacy( text, type or 0, length or 3 )
         surface.PlaySound( "buttons/lightswitch2.wav" )
     end
