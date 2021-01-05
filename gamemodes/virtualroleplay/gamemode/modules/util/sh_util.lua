@@ -1,4 +1,3 @@
---  meta
 local PLAYER = FindMetaTable( "Player" )
 
 function PLAYER:GetDroppableLookPos()

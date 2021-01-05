@@ -1,94 +1,92 @@
-local color_black = Color( 0, 0, 0 )
-local color_background = Color( 31, 32, 31 )
-local color_health = Color( 210, 32, 31 )
-local color_armor = Color( 31, 32, 210 )
+local color_background = Color( 0, 0, 0, 175 )
+local color_health = Color( 255, 71, 87 )
+local color_armor = Color( 30, 144, 255 )
+local color_hunger = Color( 46, 213, 115 )
 
-local bar_w, bar_h, gap, space
+surface.CreateFont( "VRP:HUD24", {
+    font = "Bahnschrift",
+    size = 24
+} )
 
-local function draw_bar( x, y, color, ratio, lerp_ratio )
-    draw.RoundedBox( 8, x, y - bar_h - space / 2, bar_w, bar_h, color_background )
-    draw.RoundedBox( 8, x + gap, y - bar_h - space / 2 + gap, bar_w - gap * 2, bar_h - gap * 2, color_black )
-    draw.RoundedBox( 8, x + gap, y - bar_h - space / 2 + gap, lerp_ratio * bar_w - gap * 2, bar_h - gap * 2, ColorAlpha( color, 150 ) )
-    draw.RoundedBox( 8, x + gap, y - bar_h - space / 2 + gap, ratio * bar_w - gap * 2, bar_h - gap * 2, color )
-end
+surface.CreateFont( "VRP:HUD18", {
+    font = "Bahnschrift",
+    size = 18
+} )
 
-local infos = {
-     {
-         left = "name",
-         right = function( ply )
-             return ply:GetRPName()
-         end,
-     },
-     {
-         left = "money",
-         right = function( ply )
-             return VRP.FormatMoney( ply:GetMoney() ), color_white
-         end,
-     },
-     {
-         left = "job",
-         right = function( ply )
-             return ply:GetJob().name, team.GetColor( ply:Team() )
-         end,
-     },
-     {
-         left = "Hunger:",
-         right = function( ply )
-            return ply:GetHunger()
-         end
-
-     }
-}
-
-local font = "Trebuchet24"
-local lerp_health_ratio, lerp_armor_ratio = 1, 0
+local armor, health, hunger = 0, 0, 0
 function GM:HUDPaint()
     local ply = LocalPlayer()
-    local text_height = draw.GetFontHeight( font )
-    local text_space = text_height * 1.2
-    space = ScrH() * .02
 
-    --  get size
-    surface.SetFont( font )
-    local box_w, box_h = 0, 0
-    for i, v in ipairs( infos ) do
-        local text = v.right( ply )
-        local text_w, text_h = surface.GetTextSize( text )
-        box_w = math.max( box_w, text_w + surface.GetTextSize( VRP.GetPhrase( v.left, ply:GetLanguage() ) ) * 2 )
-        box_h = math.max( box_h, text_h )
+    local name = ply:GetRPName()
+    surface.SetFont( "VRP:HUD24" )
+    local name_w = surface.GetTextSize( name )
+
+    local money = VRP.FormatMoney( ply:GetMoney() )
+    surface.SetFont( "VRP:HUD18" )
+    local money_w = surface.GetTextSize( money )
+
+    --  > Calculating sizes and pos
+    local w = math.max( 300, name_w + money_w + 150 )
+    local total_w = w - 23
+    local h = 80
+    local x = 10
+    local y = ScrH() - h - 10
+
+    --  > Background
+    surface.SetDrawColor( color_background )
+    surface.DrawRect( x, y, w, h )
+
+    x = x + 10
+    y = y + 10
+
+    -- > Name & Money
+    draw.SimpleText( name, "VRP:HUD24", x, y, color_white )
+    draw.SimpleText( money, "VRP:HUD18", x + total_w, y + 4, color_white, TEXT_ALIGN_RIGHT )
+
+    --  > Separators
+    y = y + 30
+
+    surface.SetDrawColor( color_white )
+    for i = 0, w - 22, ( w - 22 ) / 5 do
+        surface.DrawRect( x + i, y, 2, 30 )
     end
-    box_h = box_h + text_space * #infos - text_height + space / 2
 
-    local x, y = space, ScrH() - space - box_h
+    x = x + 2
+    y = y + ( VRP.HungerEnabled and 3 or 5 )
 
-    --  background
-    draw.RoundedBox( 8, x, y, box_w, box_h, color_background )
+    --  > Animations
+    health = Lerp( FrameTime() * 5, health, ply:Health() )
+    armor = Lerp( FrameTime() * 5, armor, ply:Armor() )
+    hunger = Lerp( FrameTime() * 5, hunger, ply:GetHunger() )
 
-    --  infos
-    local info_y = y
-    for i, v in ipairs( infos ) do
-        local text, color = v.right( ply )
+    local armor_w = armor <= 0.9 and 0 or math.min( math.ceil( armor ), total_w / 2 )
+    local health_w = ( total_w - armor_w ) * math.min( 100, health ) / 100
 
-        draw.SimpleText( VRP.GetPhrase( v.left, ply:GetLanguage() ) .. ":", "Trebuchet24", x + space / 2, info_y + space / 3, color_white )
-        draw.SimpleText( text, "Trebuchet24", x + box_w - space / 2, info_y + space / 3, color, TEXT_ALIGN_RIGHT )
-        info_y = info_y + text_space
+    --  > Health
+    surface.SetDrawColor( color_health )
+    surface.DrawRect( x, y, health_w, 20 )
+
+    local health_text = math.ceil( health ) .. "%"
+    surface.SetFont( "VRP:HUD18" )
+    if health_w > surface.GetTextSize( health_text ) + 10 then
+        draw.SimpleText( health_text, "VRP:HUD18", x + health_w - 5, y + 10, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
     end
 
-    --  bars
-    bar_w, bar_h = box_w, ScrH() * .02
-    gap = ScrH() * .005
+    --  > Armor
+    if armor_w > 0 then
+        surface.SetDrawColor( color_armor )
+        surface.DrawRect( x + health_w, y, armor_w, 20 )
 
-    --  health
-    local ratio = math.Clamp( LocalPlayer():Health() / LocalPlayer():GetMaxHealth(), 0, 1 )
-    lerp_health_ratio = Lerp( FrameTime() * 2, lerp_health_ratio, ratio )
-    draw_bar( x, y, color_health, ratio, lerp_health_ratio )
-    y = y - bar_h - space / 5
+        local armor_text = math.ceil( armor ) .. "%"
+        surface.SetFont( "VRP:HUD18" )
+        if armor_w > surface.GetTextSize( armor_text ) + 10 then
+            draw.SimpleText( armor_text, "VRP:HUD18", x + health_w + armor_w - 5, y + 10, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+        end
+    end
 
-    --  armor
-    local ratio = math.Clamp( LocalPlayer():Armor() / 100, 0, 1 )
-    if ratio == 0 then return end
-    lerp_armor_ratio = Lerp( FrameTime() * 2, lerp_armor_ratio, ratio )
-    draw_bar( x, y, color_armor, ratio, lerp_armor_ratio )
+    --  > Hunger
+    surface.SetDrawColor( color_hunger )
+    surface.DrawRect( x, y + 20, total_w * hunger / 100, 4 )
 end
 
 local hide = {
