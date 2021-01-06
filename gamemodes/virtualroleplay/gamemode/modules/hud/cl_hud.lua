@@ -47,8 +47,8 @@ function GM:HUDPaint()
     y = y + 30
 
     surface.SetDrawColor( color_white )
-    for i = 0, w - 22, ( w - 22 ) / 5 do
-        surface.DrawRect( x + math.floor( i ), y, 2, 30 )
+    for i = 0, total_w, total_w / 5 do
+        surface.DrawRect( x + math.floor( i ) + 1, y, 2, 30 )
     end
 
     x = x + 2
