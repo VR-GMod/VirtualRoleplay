@@ -59,7 +59,7 @@ function GM:HUDPaint()
     armor = Lerp( FrameTime() * 5, armor, ply:Armor() )
     hunger = Lerp( FrameTime() * 5, hunger, ply:GetHunger() )
 
-    local armor_w = armor <= 0.9 and 0 or math.min( math.ceil( armor ), total_w / 2 )
+    local armor_w = armor <= 0.9 and 0 or math.min( armor, total_w / 2 )
     local health_w = ( total_w - armor_w ) * math.min( 100, health ) / 100
 
     --  > Health
