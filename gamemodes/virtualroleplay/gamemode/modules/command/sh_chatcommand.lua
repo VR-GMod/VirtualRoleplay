@@ -30,3 +30,17 @@ function VRP.HandleChatCommand( ply, text )
     --  normal text
     return text
 end
+
+concommand.Add( "vrp", function( ply, _, _, str )
+    VRP.HandleChatCommand( ply, VRP.CommandIndexor .. str )
+end, function( _, args )
+    local result = {}
+
+    for k, v in pairs( VRP.ChatCommands ) do
+        if k:lower():match( args:Trim():lower() ) then
+            result[ #result + 1 ] = "vrp " .. k
+        end
+    end
+
+    return result
+end )
