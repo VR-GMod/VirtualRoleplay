@@ -33,6 +33,7 @@ end
 
 concommand.Add( "vrp", function( ply, _, _, str )
     VRP.HandleChatCommand( ply, VRP.CommandIndexor .. str )
+    
 end, function( _, args )
     local result = {}
 
