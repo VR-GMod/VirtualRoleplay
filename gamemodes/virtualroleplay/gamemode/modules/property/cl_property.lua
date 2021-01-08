@@ -4,37 +4,11 @@ function VRP.OpenKeysInventory()
     local ply = LocalPlayer()
     if IsValid( keys_inventory_menu ) then keys_inventory_menu:Remove() end
 
-    local w, h = ScrW() * .6, ScrH() * .6
-    local bar_h = draw.GetFontHeight( "VRP:Font24" ) * 1.1
-
-    local frame = vgui.Create( "DPanel" )
-    frame:SetSize( w, h )
-    frame:Center()
-    frame:MakePopup()
+    local frame = VRP.GUI_Frame( VRP.GetPhrase( "keys_inventory", ply:GetLanguage() ) )
     keys_inventory_menu = frame
-    function frame:Paint( w ,h )
-        surface.SetDrawColor( VRP.Colors.background )
-        surface.DrawRect( 0, 0, w, h )
-        surface.DrawRect( 0, 0, w, bar_h )
-
-        draw.SimpleText( VRP.GetPhrase( "keys_inventory", ply:GetLanguage() ), "VRP:Font24", 5, bar_h / 2, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-    end
-
-    local close = frame:Add( "DButton" )
-    close:SetSize( bar_h, bar_h )
-    close:SetPos( w - bar_h, 0 )
-    function close:Paint( w, h )
-        draw.SimpleText( "X", "VRP:Font24", w / 2, h / 2, self:IsHovered() and VRP.Colors.red or color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-
-        return true
-    end
-    function close:DoClick()
-        frame:Remove()
-    end
 
     local scroll = frame:Add( "DScrollPanel" )
     scroll:Dock( FILL )
-    scroll:DockMargin( 5, bar_h + 5, 5, 5 )
 
     local keys_list = scroll:Add( "DIconLayout" )
     keys_list:Dock( FILL )
@@ -49,18 +23,7 @@ function VRP.OpenKeysInventory()
         key:SizeToContents()
         key:SetWide( key:GetWide() * 1.5 )
         key:SetTall( key:GetTall() * 1.5 )
-
-        function key:Paint( w, h )
-            surface.SetDrawColor( VRP.Colors.background )
-            surface.DrawRect( 0, 0, w, h )
-
-            surface.SetDrawColor( color_white )
-            surface.DrawOutlinedRect( 0, 0, w, h )
-
-            draw.SimpleText( self:GetText(), self:GetFont(), w / 2, h / 2, self:IsHovered() and VRP.Colors.blue or color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-
-            return true
-        end
+        key.Paint = VRP.ButtonPaint
 
         function key:DoClick()
             local menu = DermaMenu( frame )
@@ -106,7 +69,7 @@ function VRP.OpenKeysInventory()
             function menu:Paint( w, h ) end -- No more default background
 
             for k, v in ipairs( menu:GetCanvas():GetChildren() ) do
-                function v:Paint( w, h ) -- Changing buttons' style
+                function v:Paint( w, h ) -- Changing line's style
                     surface.SetDrawColor( 0, 0, 0 )
                     surface.DrawRect( 0, 0, w, h )
                     
@@ -212,17 +175,8 @@ net.Receive( "VRP:PropertyMenu", function( ply )
         buttons[#buttons + 1] = pnl
 
         --  > Custom buttons with a custom style
-        function pnl:Paint( w, h )
-            surface.SetDrawColor( VRP.Colors.background )
-            surface.DrawRect( 0, 0, w, h )
-            
-            surface.SetDrawColor( color_white )
-            surface.DrawOutlinedRect( 0, 0, w, h )
-
-            draw.SimpleText( self:GetText(), "VRP:Font18", w / 2, h / 2, self:IsHovered() and VRP.Colors.blue or color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-
-            return true
-        end
+        pnl:SetFont( "VRP:Font18" )
+        pnl.Paint = VRP.ButtonPaint
         
         return pnl
     end
