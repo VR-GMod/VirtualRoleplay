@@ -60,7 +60,7 @@ function VRP.ButtonPaint( button, w, h )
     surface.SetDrawColor( color_white )
     surface.DrawOutlinedRect( 0, 0, w, h )
 
-    draw.SimpleText( button:GetText(), button:GetFont(), w / 2, h / 2, button:IsHovered() and VRP.Colors.blue or color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+    draw.SimpleText( button:GetText(), button:GetFont(), w / 2, h / 2, button:IsHovered() and VRP.Colors.blue or button:GetColor(), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 
     return true
 end
