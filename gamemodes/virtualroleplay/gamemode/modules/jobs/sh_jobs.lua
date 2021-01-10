@@ -14,7 +14,7 @@ function VRP.CreateJob( name, tbl )
     tbl.cmd = tbl.cmd or name:lower():gsub( " ", "_" )
     tbl.max = ( tbl.max or 0 ) == 0 and math.huge or tbl.max
 
-    print( ( "\tJob: %s (ID: %d)" ):format( tbl.name, tbl.id ) )
+    MsgC( color_white, ( "\tJob: %s (ID: %d)\n" ):format( tbl.name, tbl.id ) )
 
     --  command
     assert( not VRP.ChatCommands[tbl.cmd], ( "VRP: Job command (%s) already exists" ):format( tbl.cmd ), 2 )
