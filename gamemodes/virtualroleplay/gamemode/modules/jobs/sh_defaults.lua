@@ -43,9 +43,6 @@ hook.Add( "VRP:LoadCustomItems", "VRP:Jobs", function()
             ["pistol"] = 250,
             ["smg1"] = 500,
         },
-        custom_check = function( ply )
-            return ply:FlashlightIsOn(), "Get your flashlight on!"
-        end,
         player_spawn = function( ply )
             ply:SetArmor( 25 )
         end,
