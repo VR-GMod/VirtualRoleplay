@@ -13,7 +13,7 @@ function VRP.HandleChatCommand( ply, text )
     if cmd and cmd:StartWith( VRP.CommandIndexor ) then
         cmd = cmd:gsub( VRP.CommandIndexor, "" )
         if VRP.ChatCommands[cmd] then
-            local msg, type, length = VRP.ChatCommands[cmd]( ply, args )
+            local msg, type, length = VRP.ChatCommands[cmd]( ply, args, text:sub( #cmd + #VRP.CommandIndexor + 2 ) )
 
             if msg then
                 if CLIENT then
