@@ -38,7 +38,6 @@ local function change_playmode()
         surface.DrawRect( 0, 0, w, h )
 
         surface.SetDrawColor( color_white )
-        surface.DrawOutlinedRect( 0, 0, w, h )
 
         surface.SetMaterial( self:IsHovered() and mats.vr.headset or mats.vr.headset_bw )
         surface.DrawTexturedRect( 10, 10, w - 20, h - 20 )
@@ -46,6 +45,8 @@ local function change_playmode()
         self.effect = Lerp( FrameTime() * ( self:IsHovered() and 6 or 2 ), self.effect or h, self:IsHovered() and 0 or h )
         surface.SetMaterial( mats.vr.controllers )
         surface.DrawTexturedRect( 10, 10 + self.effect, w - 20, h - 20 )
+
+        surface.DrawOutlinedRect( 0, 0, w, h )
 
         return true
     end
@@ -61,7 +62,6 @@ local function change_playmode()
         surface.DrawRect( 0, 0, w, h )
 
         surface.SetDrawColor( color_white )
-        surface.DrawOutlinedRect( 0, 0, w, h )
 
         surface.SetMaterial( self:IsHovered() and mats.flat.screen or mats.flat.screen_bw )
         surface.DrawTexturedRect( 10, 10, w - 20, h - 20 )
@@ -69,6 +69,8 @@ local function change_playmode()
         self.effect = Lerp( FrameTime() * ( self:IsHovered() and 10 or 1 ), self.effect or h, self:IsHovered() and 0 or h )
         surface.SetMaterial( mats.flat.keyboard )
         surface.DrawTexturedRect( 10, 10 + self.effect, w - 20, h - 20 )
+
+        surface.DrawOutlinedRect( 0, 0, w, h )
 
         return true
     end
