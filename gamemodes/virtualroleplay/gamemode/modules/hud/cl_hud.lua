@@ -12,7 +12,7 @@ function GM:HUDPaint()
 
     --  > Calculating sizes and pos
     local w = math.max( 300, name_w + money_w + 150 )
-    local total_w = w - 23
+    local total_w = w - 22
     local h = 80
     local x = 10
     local y = ScrH() - h - 10
@@ -32,12 +32,14 @@ function GM:HUDPaint()
     y = y + 30
 
     surface.SetDrawColor( color_white )
-    for i = 0, total_w, total_w / 5 do
+    for i = 0, total_w, total_w / 4 do
         surface.DrawRect( x + math.floor( i ) + 1, y, 2, 30 )
     end
 
-    x = x + 2
+    x = x + 3
     y = y + ( VRP.HungerEnabled and 3 or 5 )
+
+    total_w = total_w - 1
 
     --  > Animations
     health = Lerp( FrameTime() * 5, health, ply:Health() )
@@ -51,7 +53,7 @@ function GM:HUDPaint()
     surface.SetDrawColor( VRP.Colors.red )
     surface.DrawRect( x, y, health_w, 20 )
 
-    local health_text = math.ceil( health ) .. "%"
+    local health_text = math.Round( health ) .. "%"
     surface.SetFont( "VRP:Font18" )
     if health_w > surface.GetTextSize( health_text ) + 10 then
         draw.SimpleText( health_text, "VRP:Font18", x + health_w - 5, y + 10, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
